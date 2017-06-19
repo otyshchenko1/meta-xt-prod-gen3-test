@@ -1,0 +1,108 @@
+Prerequisites:
+==============
+1. Python Git: sudo apt-get install python-git
+2. Google repo: https://source.android.com/source/downloading
+3. Checked with Python v 2.7.12, but other should also work
+
+Build:
+======
+Our new build system uses set of additional meta layers and tools.
+1. Please, clone the following build scripts, master branch:
+
+git clone https://github.com/xen-troops/build-scripts.git
+cd build-scripts
+
+2. In the build-scripts directory you will find a sample configuration
+file xt-build-server.cfg:
+
+cp xt-build-server.cfg xt-gen3-test.cfg
+
+3. Edit it to fit your environment: the variables we need to change
+are under [path] section. Please set:
+ - workspace_base_dir: change it to point to the place where the build will happen
+ - workspace_storage_base_dir: change it to where downloads and other files will be put
+
+For example,
+
+workspace_base_dir = /tmp/workspace_base
+workspace_storage_base_dir = /tmp/workspace_storage_base
+
+4. Run the build script:
+
+python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test --with-local-conf --config xt-gen3-test.cfg
+
+5. After that you will have all the build environment setup at workspace_base_dir
+directory.
+
+6. Download and copy EVA proprietary archives on your local filesystem in some directory:
+ - R-Car_Gen3_Series_Evaluation_Software_Package_for_Linux-20170427.zip
+ - R-Car_Gen3_Series_Evaluation_Software_Package_of_Linux_Drivers-20170427.zip
+
+7. Edit local.conf:
+
+workspace_base/build/conf/local.conf
+
+and append the following:
+
+XT_RCAR_EVAPROPRIETARY_DIR = "/path/to/eva/archives"
+
+with the correct path to the archives set.
+
+And
+XT_ALLOW_SSTATE_CACHE_MIRROR_USE = "1"
+
+8. Now, to build the images you can run the same command as in 4) but with
+additional argument --continue-build:
+
+python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test --with-local-conf --config xt-gen3-test.cfg --continue-build
+
+9. You are done. The artifacts of the build are located at workspace_base directory:
+workspace_base
+├── build
+│   ├── conf
+│   ├── deploy
+│   │   └── dom0-image-weston
+│   │       ├── images
+│   │       │   └── salvator-x-h3-xt
+│   ├── log
+│   │   ├── cooker
+│   │   │   └── salvator-x-h3
+│   │   └── dom0-image-weston
+│   │       └── cooker
+│   │           └── salvator-x-h3-xt
+│   └── tmp
+│       └── work
+│           └── x86_64-xt-linux
+│               ├── dom0-image-weston
+│               │   └── 1.0-r0
+│               │       ├── repo
+│               │       │   ├── build
+│               │       │   ├── meta-linaro
+│               │       │   ├── meta-openembedded
+│               │       │   ├── meta-rcar-gen3
+│               │       │   ├── meta-renesas
+│               │       │   ├── meta-selinux
+│               │       │   ├── meta-virtualization
+│               │       │   ├── meta-xt-images-extra
+│               │       │   ├── meta-xt-prod-extra
+│               │       │   ├── poky
+│               │       │   ├── proprietary
+├── meta
+├── meta-xt-images
+├── meta-xt-prod-gen3-test
+├── xt-distro
+
+Images are located at:
+workspace_base/build/deploy/dom0-image-weston/images/salvator-x-h3-xt
+
+Build logs are located at:
+workspace_base/build/log/dom0-image-weston/cooker/salvator-x-h3-xt/
+
+10. If one wants to build dom0 image by hand, at the time of development
+for instance, it is possible by going into workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-weston/1.0-r0/repo/
+and using poky to build:
+
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-weston/1.0-r0/repo/
+source poky/oe-init-build-env
+bitbake xt-image
+
