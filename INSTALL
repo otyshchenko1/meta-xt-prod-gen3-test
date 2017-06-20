@@ -104,5 +104,5 @@ and using poky to build:
 
 cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-weston/1.0-r0/repo/
 source poky/oe-init-build-env
-bitbake xt-image
+bitbake core-image-weston
 
