@@ -9,6 +9,7 @@ IMAGE_INSTALL_append = " \
     dosfstools \
     bash \
     rsync \
+    fdisk \
 "
 
 IMAGE_ROOTFS_SIZE = "65535"

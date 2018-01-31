@@ -1,6 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-BRANCH = "ces2018"
+BRANCH = "master"
 SRCREV = "${AUTOREV}"
 
 SRC_URI = " \
@@ -8,5 +8,5 @@ SRC_URI = " \
     file://defconfig \
   "
 do_deploy_append () {
-    find ${D}/boot -iname "vmlinux*" -exec tar -cJvf ${STAGING_KERNEL_BUILDDIR}/vmlinux.tar.xz {} \;
+    find ${D}/boot -iname "vmlinux*" -exec tar -cJvf ${STAGING_KERNEL_BUILDDIR}/vmlinux.tar.xz {} \; || true
 }

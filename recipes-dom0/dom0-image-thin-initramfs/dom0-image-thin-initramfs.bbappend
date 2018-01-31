@@ -1,14 +1,13 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../inc:"
 
-do_fetch[depends] += "domd-agl-demo-platform:do_${BB_DEFAULT_TASK}"
-do_fetch[depends] += "domu-image-android:do_${BB_DEFAULT_TASK}"
-do_fetch[depends] += "domu-image-fusion:do_${BB_DEFAULT_TASK}"
+do_fetch[depends] += "domd-image-weston:do_${BB_DEFAULT_TASK}"
+do_fetch[depends] += "domu-image-weston:do_${BB_DEFAULT_TASK}"
 
 ################################################################################
 # Generic ARMv8
 ################################################################################
-SRC_URI = "repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=prod_ces2018/dom0.xml;scmdata=keep"
+SRC_URI = "repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=prod_gen3_test/dom0.xml;scmdata=keep"
 
 ###############################################################################
 # extra layers and files to be put after Yocto's do_unpack into inner builder

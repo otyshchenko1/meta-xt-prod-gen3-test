@@ -6,14 +6,12 @@ IMAGE_INSTALL_append = " \
     xen-xenstat \
     xen-misc \
     guest-addons \
-    guest-addons-run-doma \
     guest-addons-run-domd \
-    guest-addons-run-domf \
+    guest-addons-run-domu \
     guest-addons-run-vcpu_pin \
     guest-addons-run-set_root_dev \
     domd-install-artifacts \
-    doma-install-artifacts \
-    domf-install-artifacts \
+    domu-install-artifacts \
 "
 
 generate_uboot_image() {
