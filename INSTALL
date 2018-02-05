@@ -27,9 +27,9 @@ For example,
 workspace_base_dir = /tmp/workspace_base
 workspace_storage_base_dir = /tmp/workspace_storage_base
 
-4. Run the build script:
+4. Run the build script for current stable release:
 
-python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test --with-local-conf --config xt-gen3-test.cfg
+python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test-v1 --with-local-conf --config xt-gen3-test.cfg
 
 5. After that you will have all the build environment setup at workspace_base_dir
 directory.
@@ -54,7 +54,7 @@ XT_ALLOW_SSTATE_CACHE_MIRROR_USE = "1"
 8. Now, to build the images you can run the same command as in 4) but with
 additional argument --continue-build:
 
-python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test --with-local-conf --config xt-gen3-test.cfg --continue-build
+python ./build_prod.py --build-type dailybuild --machine salvator-x-h3 --product gen3-test-v1 --with-local-conf --config xt-gen3-test.cfg --continue-build
 
 9. You are done. The artifacts of the build are located at workspace_base directory:
 workspace_base
