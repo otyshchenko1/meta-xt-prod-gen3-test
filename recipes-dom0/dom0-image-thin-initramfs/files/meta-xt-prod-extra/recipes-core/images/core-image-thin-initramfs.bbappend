@@ -8,7 +8,6 @@ IMAGE_INSTALL_append = " \
     guest-addons \
     guest-addons-run-domd \
     guest-addons-run-domu \
-    guest-addons-run-vcpu_pin \
     guest-addons-run-set_root_dev \
     domd-install-artifacts \
     domu-install-artifacts \
