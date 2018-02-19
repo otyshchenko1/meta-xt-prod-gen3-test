@@ -9,7 +9,6 @@ RDEPENDS_packagegroup-xt-core-network = "\
     guest-addons-bridge-config \
     dnsmasq \
     nftables \
-    ntpdate-systemd \
     tzdata \
     dhcp-client \
 "
