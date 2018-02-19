@@ -1,0 +1,5 @@
+/*
+*  Dummy M3N .dts
+*  model = "Renesas Salvator-X board based on r8a77965";
+*  compatible = "renesas,salvator-x", "renesas,r8a77965";
+*/

@@ -4,7 +4,7 @@ require inc/xt_shared_env.inc
 
 RENESAS_BSP_URL = "git://github.com/xen-troops/linux.git"
 
-BRANCH = "ces2018"
+BRANCH = "master"
 SRCREV = "${AUTOREV}"
 SRC_URI_append = " \
     file://defconfig \
@@ -45,6 +45,21 @@ KERNEL_DEVICETREE_salvator-x-h3-xt = " \
     renesas/r8a7795-salvator-x-dom0.dtb \
     renesas/r8a7795-salvator-x-domd.dtb \
     renesas/r8a7795-salvator-x-domu.dtb \
+"
+
+##############################################################################
+# Salvator-X M3N
+###############################################################################
+SRC_URI_append_salvator-x-m3n-xt = " \
+    file://r8a77965-salvator-x-dom0.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+    file://r8a77965-salvator-x-domd.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+    file://r8a77965-salvator-x-domu.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+"
+
+KERNEL_DEVICETREE_salvator-x-m3n-xt = " \
+    renesas/r8a77965-salvator-x-dom0.dtb \
+    renesas/r8a77965-salvator-x-domd.dtb \
+    renesas/r8a77965-salvator-x-domu.dtb \
 "
 
 do_deploy_append() {
