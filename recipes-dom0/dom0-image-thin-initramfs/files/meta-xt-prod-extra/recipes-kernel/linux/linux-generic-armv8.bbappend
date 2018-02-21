@@ -1,6 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-BRANCH = "master"
+BRANCH = "v4.9/rcar-3.5.9"
 SRCREV = "${AUTOREV}"
 
 SRC_URI = " \
