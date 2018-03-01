@@ -10,6 +10,10 @@ SRC_URI_append = " \
     file://defconfig \
 "
 
+SRC_URI_append_rcar = " \
+    file://0001-firmware-Add-xHCI-Host-Controller-firmware.patch \
+"
+
 DEPLOYDIR="${XT_DIR_ABS_SHARED_BOOT_DOMD}"
 
 ##############################################################################
