@@ -1,9 +1,9 @@
 ################################################################################
 # Renesas R-Car
 ################################################################################
-SRCREV_rcar = "${AUTOREV}"
+SRCREV_rcar = "v0.1.4"
 
-SRC_URI_append_rcar = " git://github.com/xen-troops/displ_be.git;protocol=https;branch=master"
+SRC_URI_append_rcar = " git://github.com/xen-troops/displ_be.git;protocol=https"
 
 DEPENDS += " wayland-ivi-extension"
 
