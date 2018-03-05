@@ -5,7 +5,7 @@ After=proc-xen.mount weston.service
 
 [Service]
 Type=simple
-Environment="XDG_RUNTIME_DIR=/run/platform/display"
+Environment="XDG_RUNTIME_DIR=/run/user/0"
 ExecStartPre=/bin/sleep 1
 ExecStart=/usr/bin/displ_be
 ExecStartPost=/usr/bin/xenstore-write drivers/displbe/status ready

@@ -49,6 +49,7 @@ SYSTEMD_SERVICE_${PN}-bridge-up-notification-service = " bridge-up-notification.
 
 FILES_${PN}-displbe-service = " \
     ${systemd_system_unitdir}/displbe.service \
+    ${base_prefix}${sysconfdir}/systemd/system/displbe \
 "
 
 FILES_${PN}-bridge-up-notification-service = " \
@@ -80,6 +81,7 @@ do_install() {
     install -d ${D}${sysconfdir}/systemd/user/default.target.wants
     ln -sf ${systemd_user_unitdir}/sndbe.service ${D}${sysconfdir}/systemd/user/default.target.wants
 
+    ln -sf ${systemd_system_unitdir}/displbe.service ${D}${sysconfdir}/systemd/system/displbe
 }
 
 FILES_${PN} = " \
