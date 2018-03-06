@@ -18,6 +18,7 @@ SRC_URI = " \
     file://xenbr0-systemd-networkd.conf \
     file://port-forward-systemd-networkd.conf \
     file://sndbe.service \
+    file://sata_en.sh \
 "
 
 S = "${WORKDIR}"

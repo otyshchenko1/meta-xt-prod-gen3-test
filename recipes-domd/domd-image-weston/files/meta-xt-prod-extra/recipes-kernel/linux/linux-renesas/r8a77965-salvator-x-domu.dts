@@ -1,5 +1,24 @@
-/*
-*  Dummy M3N .dts
-*  model = "Renesas Salvator-X board based on r8a77965";
-*  compatible = "renesas,salvator-x", "renesas,r8a77965";
-*/
+/dts-v1/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	soc {
+		#address-cells = <2>;
+		#size-cells = <2>;
+
+		gsx: gsx@fd000000 {
+			compatible = "renesas,gsx";
+			reg = <0 0xfd000000 0 0x3ffff>;
+			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+			/*clocks = <&cpg CPG_MOD 112>;*/
+			/*operating-points-v2 = <&gsx_opp_table>;*/
+			/*power-domains = <&sysc R8A77965_PD_3DG_B>;*/
+		};
+	};
+
+	/* keep this to make XEN happy */
+	passthrough {
+	};
+};
+
