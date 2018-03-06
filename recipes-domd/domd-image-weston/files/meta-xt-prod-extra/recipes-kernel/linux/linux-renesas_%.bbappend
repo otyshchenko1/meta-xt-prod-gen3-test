@@ -10,11 +10,6 @@ SRC_URI_append = " \
     file://defconfig \
 "
 
-SRC_URI_append_rcar = " \
-    file://0001-r8a7795-6-.dtsi-Add-ranges-that-AUDMACs-relies-on.patch \
-    file://0002-HACK-Enable-VSPM-related-clocks-in-rcar-du-driver.patch \
-"
-
 DEPLOYDIR="${XT_DIR_ABS_SHARED_BOOT_DOMD}"
 
 ##############################################################################
