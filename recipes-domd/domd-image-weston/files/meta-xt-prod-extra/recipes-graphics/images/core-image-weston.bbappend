@@ -7,6 +7,7 @@ IMAGE_INSTALL_append = " \
     packagegroup-xt-core-pv \
     packagegroup-xt-core-network \
     kmscube \
+    optee-os \
 "
 
 # Configuration for ARM Trusted Firmware
