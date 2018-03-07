@@ -43,6 +43,7 @@
 
 / {
 	aliases {
+		serial0 = &scif2;
 		serial1 = &scif1;
 		ethernet0 = &avb;
 	};
@@ -50,17 +51,6 @@
 	soc {
 		//this must point to Xen interrupt-parent
 		interrupt-parent = <PHANDLE_GIC>;
-
-		// Xen will provide gic, drop ours
-
-		/delete-node/interrupt-controller@f1010000;
-
-		// scif2 is used by XEN, drop it
-
-		/delete-node/serial@e6e88000;
-
-		/* Thermal is not under Linux control */
-		/delete-node/thermal-zones;
 	};
 
 	passthrough {
@@ -308,7 +298,9 @@
 	clock-frequency = <108000000>;
 };
 
-/delete-node/&avs_sensor;
+&a57_0 {
+	cpu-supply = <&vdd_dvfs>;
+};
 
 &pwm1 {
 	pinctrl-0 = <&pwm1_pins>;
@@ -327,34 +319,14 @@
 	pinctrl-names = "default";
 	status = "okay";
 
-	/* add gsx domain if gsx is passthroughed */
-	power-domains = <&sysc R8A7795_PD_3DG_E>;
-
 	/* update <du_dotclkin0/3> to <programmable_clk0/1> */
-	/* add gsx clk (3dge) if gsx is passthroughed */
 	clocks = <&cpg CPG_MOD 724>,
 		 <&cpg CPG_MOD 723>,
 		 <&cpg CPG_MOD 722>,
 		 <&cpg CPG_MOD 721>,
 		 <&cpg CPG_MOD 727>,
 		 <&programmable_clk0>, <&du_dotclkin1>, <&du_dotclkin2>,
-		 <&programmable_clk1>,
-		 <&cpg CPG_MOD 112>,
-		 <&cpg CPG_MOD 624>, <&cpg CPG_MOD 606>,
-		 <&cpg CPG_MOD 626>, <&cpg CPG_MOD 607>,
-		 <&cpg CPG_MOD 631>, <&cpg CPG_MOD 611>,
-		 <&cpg CPG_MOD 630>, <&cpg CPG_MOD 610>,
-		 <&cpg CPG_MOD 119>, <&cpg CPG_MOD 615>,
-		 <&cpg CPG_MOD 118>, <&cpg CPG_MOD 614>;
-	clock-names = "du.0", "du.1", "du.2", "du.3",
-				  "lvds.0", "dclkin.0", "dclkin.1",
-				  "dclkin.2", "dclkin.3", "3dge",
-				  "vspbc", "fcpvbc",
-				  "vspbd", "fcpvbd",
-				  "vspi0", "fcpvi0",
-				  "vspi1", "fcpvi1",
-				  "fdp0", "fcpf0",
-				  "fdp1", "fcpf1";
+		 <&programmable_clk1>;
 
 	backlight-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
 
@@ -492,13 +464,13 @@
 	};
 
 	sdhi2_pins: sd2 {
-		groups = "sdhi2_data8", "sdhi2_ctrl";
+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
 		function = "sdhi2";
 		power-source = <3300>;
 	};
 
 	sdhi2_pins_uhs: sd2_uhs {
-		groups = "sdhi2_data8", "sdhi2_ctrl";
+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
 		function = "sdhi2";
 		power-source = <1800>;
 	};
@@ -588,6 +560,13 @@
 	pinctrl-names = "default";
 
 	/* Please use exclusively to the hscif1 node */
+	status = "okay";
+};
+
+&scif2 {
+	pinctrl-0 = <&scif2_pins>;
+	pinctrl-names = "default";
+
 	status = "okay";
 };
 
@@ -707,7 +686,7 @@
 
 	/* audio_clkout0/1/2/3 */
 	#clock-cells = <1>;
-	clock-frequency = <11289600>;
+	clock-frequency = <12288000 11289600>;
 	clkout-lr-synchronous;
 
 	status = "okay";
@@ -739,6 +718,10 @@
 	};
 };
 
+&sata {
+	status = "okay";
+};
+
 &sdhi0 {
 	pinctrl-0 = <&sdhi0_pins>;
 	pinctrl-1 = <&sdhi0_pins_uhs>;
@@ -768,7 +751,6 @@
 	drive-strength = <1>;
 	non-removable;
 	status = "okay";
-	power-domains = <&sysc R8A7795_PD_A3VP>;
 };
 
 &sdhi3 {
@@ -797,6 +779,22 @@
 
 &audio_clk_a {
 	clock-frequency = <22579200>;
+};
+
+&i2c_dvfs {
+	status = "okay";
+
+	clock-frequency = <400000>;
+
+	vdd_dvfs: regulator@30 {
+		compatible = "rohm,bd9571mwv";
+		reg = <0x30>;
+
+		regulator-min-microvolt = <750000>;
+		regulator-max-microvolt = <1030000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
 };
 
 &avb {
@@ -828,6 +826,10 @@
 };
 
 &xhci0 {
+	status = "okay";
+};
+
+&usb3_peri0 {
 	status = "okay";
 };
 
@@ -952,12 +954,10 @@
 
 &pciec0 {
 	status = "okay";
-	interrupt-map = <0 0 0 0 PHANDLE_GIC GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
 };
 
 &pciec1 {
 	status = "okay";
-	interrupt-map = <0 0 0 0 PHANDLE_GIC GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
 };
 
 &vin0 {
@@ -1033,27 +1033,19 @@
 };
 
 &vspbc {
-	status = "disabled";
+	status = "okay";
 };
 
 &vspbd {
-	status = "disabled";
+	status = "okay";
 };
 
 &vspi0 {
-	status = "disabled";
+	status = "okay";
 };
 
 &vspi1 {
-	status = "disabled";
-};
-
-&fdp0 {
-	status = "disabled";
-};
-
-&fdp1 {
-	status = "disabled";
+	status = "okay";
 };
 
 &dmac0 {
@@ -1067,6 +1059,7 @@
 &dmac2 {
 	/delete-property/iommus;
 };
+
 &audma0 {
 	/delete-property/iommus;
 };
@@ -1075,14 +1068,11 @@
 	/delete-property/iommus;
 };
 
-&tsc1 {
-	status = "disabled";
+/* Xen will provide its own GIC, mask ours */
+&gic {
+	compatible = "";
 };
 
-&tsc2 {
-	status = "disabled";
-};
-
-&tsc3 {
+&scif2 {
 	status = "disabled";
 };
