@@ -44,6 +44,7 @@
 / {
 
 	aliases {
+		serial0 = &scif2;
 		serial1 = &scif1;
 		ethernet0 = &avb;
 	};
@@ -646,6 +647,11 @@
 	};
 };
 
+&sata {
+	/* Please use exclusively to pciec1 node */
+	status = "okay";
+};
+
 &sdhi0 {
 	pinctrl-0 = <&sdhi0_pins>;
 	pinctrl-1 = <&sdhi0_pins_uhs>;
@@ -865,9 +871,9 @@
 	status = "okay";
 };
 
-&sata {
-	/* Please use exclusively to pciec1 node */
-	status = "okay";
+&pciec1 {
+	/* Please use exclusively to sata node */
+	/* status = "okay"; */
 };
 
 &vin0 {
@@ -950,8 +956,6 @@
 	status = "okay";
 };
 
-/* ============================ Xen pass through section ============================ */
-
 &dmac0 {
 	/delete-property/iommus;
 };
@@ -975,7 +979,7 @@
 /* Xen will provide its own GIC, mask ours */
 &gic {
 	compatible = "";
- };
+};
 
 &scif2 {
 	status = "disabled";
