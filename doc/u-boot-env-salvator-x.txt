@@ -9,7 +9,7 @@ storage device without "/dev/", e.g.
 setenv boot_dev mmcblk1
 setenv set_boot_dev 'fdt addr 0x48000000; fdt resize; fdt mknode / boot_dev; fdt set /boot_dev device ${boot_dev}'
 
-Salvator-X-H3/M3
+Salvator-X
 ===================================
 
 setenv bootdelay 3

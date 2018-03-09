@@ -69,3 +69,10 @@ configure_versions_rcar() {
 python do_configure_append_rcar() {
     bb.build.exec_func("configure_versions_rcar", d)
 }
+
+do_install_append () {
+    local LAYERDIR=${TOPDIR}/../meta-xt-prod-gen3-test
+    find ${LAYERDIR}/doc -iname "u-boot-env*" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; || true
+    find ${LAYERDIR}/doc -iname "mk_sdcard_image.sh" -exec cp -f {} ${DEPLOY_DIR}/domd-image-weston/images/${MACHINE}-xt \; \
+    -exec cp -f {} ${DEPLOY_DIR} \; || true
+}
