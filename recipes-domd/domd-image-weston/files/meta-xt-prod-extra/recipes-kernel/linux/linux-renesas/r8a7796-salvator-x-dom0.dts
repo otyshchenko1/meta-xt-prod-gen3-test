@@ -45,13 +45,8 @@
 		ethernet0 = &avb;
 	};
 
-	soc {
-		/* Thermal is not under Linux control */
-		/delete-node/thermal-zones;
-	};
-
 	chosen {
-		bootargs = "dom0_mem=256M console=dtuart dtuart=serial0 dom0_max_vcpus=4 bootscrub=0 flask_enforcing=1 loglvl=all cpufreq=xen:ondemand gnttab_max_frames=64";
+		bootargs = "dom0_mem=256M console=dtuart dtuart=serial0 dom0_max_vcpus=4 bootscrub=0 flask_enforcing=1 loglvl=all";
 		xen,dom0-bootargs = "console=hvc0 ignore_loglevel";
 		modules {
 			#address-cells = <2>;
@@ -71,45 +66,7 @@
 		device_type = "memory";
 		/* first 128MB is reserved for secure area. */
 		reg = <0x0 0x48000000 0x0 0x78000000>,
-		      <0x6 0x00000000 0x0 0x80000000>;
-	};
-
-	mailbox: mailbox@0 {
-		compatible = "arm,smc-mbox";
-		#mbox-cells = <1>;
-		arm,func-ids = <0x82000001>, <0x82000002>;
-		method = "smc";
-	};
-
-	sram: sram@47FFF000 {
-		compatible = "mmio-sram";
-		reg = <0x0 0x47FFF000 0x0 0x1000>;
-
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges = <0 0x0 0x47FFF000 0x1000>;
-
-		scp_shmem: scp_shmem@0 {
-			compatible = "mmio-sram";
-			reg = <0x0 0x200>;
-		};
-	};
-
-	scpi {
-		compatible = "arm,scpi";
-		mboxes = <&mailbox 0>;
-		shmem = <&scp_shmem>;
-
-		clocks {
-			compatible = "arm,scpi-clocks";
-
-			scpi_dvfs: scpi_dvfs@0 {
-				compatible = "arm,scpi-dvfs-clocks";
-				#clock-cells = <1>;
-				clock-indices = <0>, <1>;
-				clock-output-names = "cpu_a57_clk", "cpu_a53_clk";
-			};
-		};
+			  <0x6 0x00000000 0x0 0x80000000>;
 	};
 
 	avb-mch {
@@ -327,30 +284,8 @@
 };
 
 &a57_0 {
-	clocks = <&scpi_dvfs 0>;
+	cpu-supply = <&vdd_dvfs>;
 };
-
-&a57_1 {
-	clocks = <&scpi_dvfs 0>;
-};
-
-&a53_0 {
-	/delete-property/clocks;
-};
-
-&a53_1 {
-	/delete-property/clocks;
-};
-
-&a53_2 {
-	/delete-property/clocks;
-};
-
-&a53_3 {
-	/delete-property/clocks;
-};
-
-/delete-node/&avs_sensor;
 
 &pwm1 {
 	pinctrl-0 = <&pwm1_pins>;
@@ -419,13 +354,13 @@
 	};
 
 	sdhi2_pins: sd2 {
-		groups = "sdhi2_data8", "sdhi2_ctrl";
+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
 		function = "sdhi2";
 		power-source = <3300>;
 	};
 
 	sdhi2_pins_uhs: sd2_uhs {
-		groups = "sdhi2_data8", "sdhi2_ctrl";
+		groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
 		function = "sdhi2";
 		power-source = <1800>;
 	};
@@ -467,7 +402,7 @@
 	};
 
 	sound_pins: sound {
-		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data_a";
+		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
 		function = "ssi";
 	};
 
@@ -495,8 +430,7 @@
 	phy-handle = <&phy0>;
 	status = "okay";
 	phy-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-
-	iommus = <&ipmmu_ds0 16>;
+	phy-reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
 
 	phy0: ethernet-phy@0 {
 		rxc-skew-ps = <1500>;
@@ -532,25 +466,12 @@
 &du {
 	status = "okay";
 
-	/* add gsx domain if gsx is passthroughed */
-	power-domains = <&sysc R8A7796_PD_3DG_B>;
-
 	/* update <du_dotclkin0/2> to <programable_clk0/1> */
-	/* add gsx clk (3dge) if gsx is passthroughed */
 	clocks = <&cpg CPG_MOD 724>,
 		 <&cpg CPG_MOD 723>,
 		 <&cpg CPG_MOD 722>,
 		 <&cpg CPG_MOD 727>,
-		 <&programmable_clk0>, <&du_dotclkin1>, <&programmable_clk1>,
-		 <&cpg CPG_MOD 112>,
-		 <&cpg CPG_MOD 626>, <&cpg CPG_MOD 607>,
-		 <&cpg CPG_MOD 631>, <&cpg CPG_MOD 611>,
-		 <&cpg CPG_MOD 119>, <&cpg CPG_MOD 615>;
-	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-				  "dclkin.0", "dclkin.1", "dclkin.2", "3dge",
-				  "vspb", "fcpvb",
-				  "vspi0", "fcpvi0",
-				  "fdp0", "fcpf0";
+		 <&programmable_clk0>, <&du_dotclkin1>, <&programmable_clk1>;
 
 	backlight-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
 
@@ -615,8 +536,6 @@
 	sd-uhs-sdr50;
 	sd-uhs-sdr104;
 	status = "okay";
-
-	iommus = <&ipmmu_ds1 32>;
 };
 
 &sdhi2 {
@@ -630,17 +549,9 @@
 	mmc-hs200-1_8v;
 	mmc-hs400-1_8v;
 	bus-width = <8>;
+	drive-strength = <1>;
 	non-removable;
 	status = "okay";
-
-	iommus = <&ipmmu_ds1 34>;
-
-	/*
-	   FIXME: following is a hacky way to get A3VP power domain enabled from
-	  DomD. SDHI2 is choosen because onboard eMMC is going to be turned on
-	  always and overriding its native ALWAYS_ON power domain is not harmful
-	 */
-	power-domains = <&sysc R8A7796_PD_A3VC>;
 };
 
 &sdhi3 {
@@ -656,8 +567,6 @@
 	sd-uhs-sdr50;
 	sd-uhs-sdr104;
 	status = "okay";
-
-	iommus = <&ipmmu_ds1 35>;
 };
 
 &scif1 {
@@ -789,7 +698,7 @@
 
 	/* audio_clkout0/1/2/3 */
 	#clock-cells = <1>;
-	clock-frequency = <11289600>;
+	clock-frequency = <12288000 11289600>;
 	clkout-lr-synchronous;
 
 	status = "okay";
@@ -829,6 +738,22 @@
 	clock-frequency = <22579200>;
 };
 
+&i2c_dvfs {
+	status = "okay";
+
+	clock-frequency = <400000>;
+
+	vdd_dvfs: regulator@30 {
+		compatible = "rohm,bd9571mwv";
+		reg = <0x30>;
+
+		regulator-min-microvolt = <750000>;
+		regulator-max-microvolt = <1030000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+};
+
 &wdt0 {
 	timeout-sec = <60>;
 	status = "okay";
@@ -836,8 +761,10 @@
 
 &xhci0 {
 	status = "okay";
+};
 
-	iommus = <&ipmmu_hc 12>;
+&usb3_peri0 {
+	status = "okay";
 };
 
 &usb2_phy0 {
@@ -861,34 +788,18 @@
 
 &ehci0 {
 	status = "okay";
-
-	iommus = <&ipmmu_hc 4>;
 };
 
 &ehci1 {
 	status = "okay";
-
-	iommus = <&ipmmu_hc 5>;
 };
 
 &ohci0 {
 	status = "okay";
-
-	iommus = <&ipmmu_hc 4>;
 };
 
 &ohci1 {
 	status = "okay";
-
-	iommus = <&ipmmu_hc 5>;
-};
-
-&usb_dmac0 {
-	iommus = <&ipmmu_hc 9>;
-};
-
-&usb_dmac1 {
-	iommus = <&ipmmu_hc 10>;
 };
 
 &msiof_ref_clk {
@@ -1040,30 +951,121 @@
 	};
 };
 
-&ipmmu_vc0 {
-	compatible = "renesas,ipmmu-r8a7796";
-	status = "okay";
-};
-
 &vspb {
 	status = "okay";
-	iommus = <&ipmmu_vi 5>;
 };
 
 &vspi0 {
 	status = "okay";
-	iommus = <&ipmmu_vc0 19>;
-};
-
-&fdp0 {
-	iommus = <&ipmmu_vc0 16>;
 };
 
 &vin0 {
 	status = "okay";
 };
 
+&vspb {
+	iommus = <&ipmmu_vi 5>;		/* FCP-VB ch0 */
+};
+
+&vspi0 {
+	iommus = <&ipmmu_vc0 19>;	/* FCP-VI ch0 */
+};
+
+&fdp0 {
+	iommus = <&ipmmu_vc0 16>;	/* FCP-F ch0 */
+};
+
+&fcpvd0 {
+	iommus = <&ipmmu_vi 8>;		/* FCP-VD ch0 */
+};
+
+&fcpvd1 {
+	iommus = <&ipmmu_vi 9>;		/* FCP-VD ch1 */
+};
+
+&fcpvd2 {
+	iommus = <&ipmmu_vi 10>;	/* FCP-VD ch2 */
+};
+
+&hdmi0 {
+	iommus = <&ipmmu_vi 12>;
+};
+
+&sdhi0 {
+	iommus = <&ipmmu_ds1 32>;
+};
+
+&sdhi2 {
+	iommus = <&ipmmu_ds1 34>;
+};
+
+&sdhi3 {
+	iommus = <&ipmmu_ds1 35>;
+};
+
+&avb {
+	iommus = <&ipmmu_ds0 16>;
+};
+
+&xhci0 {
+	iommus = <&ipmmu_hc 12>,	/* Host ch0 */
+			 <&ipmmu_hc 13>;	/* Peripheral ch0 */
+};
+
+&ehci0 {
+	iommus = <&ipmmu_hc 4>;
+};
+
+&ehci1 {
+	iommus = <&ipmmu_hc 5>;
+};
+
+&ohci0 {
+	iommus = <&ipmmu_hc 4>;
+};
+
+&ohci1 {
+	iommus = <&ipmmu_hc 5>;
+};
+
+&usb_dmac0 {
+	iommus = <&ipmmu_hc 9>;
+};
+
+&usb_dmac1 {
+	iommus = <&ipmmu_hc 10>;
+};
+
+&ipmmu_vi {
+	status = "okay";
+};
+
+&ipmmu_vc0 {
+	compatible = "renesas,ipmmu-r8a7796";
+	status = "okay";
+};
+
+&ipmmu_pv0 {
+	status = "okay";
+};
+
+&ipmmu_pv1 {
+	status = "okay";
+};
+
+&ipmmu_ir {
+	status = "okay";
+};
+
 &ipmmu_hc {
+	status = "okay";
+};
+
+&ipmmu_rt {
+	status = "okay";
+};
+
+&ipmmu_mp0 {
 	status = "okay";
 };
 
@@ -1075,15 +1077,7 @@
 	status = "okay";
 };
 
-&ipmmu_mp0 {
-	status = "okay";
-};
-
 &ipmmu_mm {
-	status = "okay";
-};
-
-&ipmmu_vi {
 	status = "okay";
 };
 
@@ -1091,32 +1085,20 @@
 	xen,coproc;
 };
 
-&fcpvd0 {
-	iommus = <&ipmmu_vi 8>;
-};
-
-&fcpvd1 {
-	iommus = <&ipmmu_vi 9>;
-};
-
-&fcpvd2 {
-	iommus = <&ipmmu_vi 10>;
-};
-
-&hdmi0 {
-	iommus = <&ipmmu_vi 12>;
-};
-
-&tsc1 {
-	status = "disabled";
-};
-
-&tsc2 {
-	status = "disabled";
-};
-
 /* ============================ Xen pass through section ============================ */
 
+&csi2_20	{ xen,passthrough; };
+&csi2_40	{ xen,passthrough; };
+&du			{ xen,passthrough; };
+&usb_dmac0	{ xen,passthrough; };
+&usb_dmac1	{ xen,passthrough; };
+&dmac0		{ xen,passthrough; };
+&dmac1		{ xen,passthrough; };
+&dmac2		{ xen,passthrough; };
+&audma0		{ xen,passthrough; };
+&audma1		{ xen,passthrough; };
+&avb		{ xen,passthrough; };
+&fdp0		{ xen,passthrough; };
 &gpio0		{ xen,passthrough; };
 &gpio1		{ xen,passthrough; };
 &gpio2		{ xen,passthrough; };
@@ -1125,49 +1107,18 @@
 &gpio5		{ xen,passthrough; };
 &gpio6		{ xen,passthrough; };
 &gpio7		{ xen,passthrough; };
-
+&hdmi0		{ xen,passthrough; };
+&i2c_dvfs	{ xen,passthrough; };
 &i2c2		{ xen,passthrough; };
 &i2c4		{ xen,passthrough; };
-
-&avb		{ xen,passthrough; };
-
+&intc_ex	{ xen,passthrough; };
+&mfis_as	{ xen,passthrough; };
+&pciec0		{ xen,passthrough; };
+&pciec1		{ xen,passthrough; };
 &sdhi0		{ xen,passthrough; };
 &sdhi2		{ xen,passthrough; };
 &sdhi3		{ xen,passthrough; };
-
-&hscif1		{ xen,passthrough; };
-
-&xhci0		{ xen,passthrough; };
-
-&ehci0		{ xen,passthrough; };
-&ehci1		{ xen,passthrough; };
-&ohci0		{ xen,passthrough; };
-&ohci1		{ xen,passthrough; };
-&hsusb		{ xen,passthrough; };
-&usb2_phy0	{ xen,passthrough; };
-
-&usb_dmac0	{ xen,passthrough; };
-&usb_dmac1	{ xen,passthrough; };
-
-&msiof0		{ xen,passthrough; };
-&msiof1		{ xen,passthrough; };
-&msiof2		{ xen,passthrough; };
-&msiof3		{ xen,passthrough; };
-
-&pciec0		{ xen,passthrough; };
-&pciec1		{ xen,passthrough; };
-
-&dmac0		{ xen,passthrough; };
-&dmac1		{ xen,passthrough; };
-&dmac2		{ xen,passthrough; };
-
-&audma0		{ xen,passthrough; };
-&audma1		{ xen,passthrough; };
-
-&mfis		{ xen,passthrough; };
-
 &scif1		{ xen,passthrough; };
-
 &src0		{ xen,passthrough; };
 &src1		{ xen,passthrough; };
 &src2		{ xen,passthrough; };
@@ -1188,7 +1139,20 @@
 &ssi7		{ xen,passthrough; };
 &ssi8		{ xen,passthrough; };
 &ssi9		{ xen,passthrough; };
-
+&tsc1		{ xen,passthrough; };
+&tsc2		{ xen,passthrough; };
+&tsc3		{ xen,passthrough; };
+&usb2_phy0	{ xen,passthrough; };
+&hsusb		{ xen,passthrough; };
+&xhci0		{ xen,passthrough; };
+&usb3_peri0	{ xen,passthrough; };
+&ohci0		{ xen,passthrough; };
+&ehci0		{ xen,passthrough; };
+&ohci1		{ xen,passthrough; };
+&ehci1		{ xen,passthrough; };
+&ivdp1c		{ xen,passthrough; };
+&vdpb		{ xen,passthrough; };
+&vcplf		{ xen,passthrough; };
 &vin0		{ xen,passthrough; };
 &vin1		{ xen,passthrough; };
 &vin2		{ xen,passthrough; };
@@ -1197,24 +1161,11 @@
 &vin5		{ xen,passthrough; };
 &vin6		{ xen,passthrough; };
 &vin7		{ xen,passthrough; };
-
-&csi2_20	{ xen,passthrough; };
-&csi2_40	{ xen,passthrough; };
-
-&vcplf		{ xen,passthrough; };
-&vdpb		{ xen,passthrough; };
-&ivdp1c		{ xen,passthrough; };
-&fdp0		{ xen,passthrough; };
-
-&vspb		{ xen,passthrough; };
-&vspi0		{ xen,passthrough; };
-&du		{ xen,passthrough; };
 &vspd0		{ xen,passthrough; };
 &vspd1		{ xen,passthrough; };
 &vspd2		{ xen,passthrough; };
-&hdmi0		{ xen,passthrough; };
-
+&vspb		{ xen,passthrough; };
+&vspi0		{ xen,passthrough; };
 &fcpvd0		{ xen,passthrough; };
 &fcpvd1		{ xen,passthrough; };
 &fcpvd2		{ xen,passthrough; };
-
