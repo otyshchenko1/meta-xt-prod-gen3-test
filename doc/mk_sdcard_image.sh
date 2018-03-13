@@ -66,7 +66,7 @@ partition_image()
 {
 	print_step "Make partitions"
 
-	sudo parted $1 mklabel msdos
+	sudo parted -s $1 mklabel msdos
 
 	sudo parted -s $1 mkpart primary ext4 1MiB 257MiB
 	sudo parted -s $1 mkpart primary ext4 257MiB 2257MiB
@@ -266,6 +266,7 @@ make_image()
 	print_step "Preparing image at ${img_output_file}"
 
 	sudo umount -f ${MOUNT_POINT} || true
+	ls ${img_output_file}?* | xargs -n1 sudo umount -l -f || true
 
 	inflate_image $img_output_file $image_sg_gb
 	partition_image $img_output_file
