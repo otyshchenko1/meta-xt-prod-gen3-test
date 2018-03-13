@@ -5,6 +5,7 @@ IMAGE_INSTALL_append = " \
     xen-xencommons \
     xen-xenstat \
     xen-misc \
+    xen-base \
     guest-addons \
     guest-addons-run-domd \
     guest-addons-run-domu \
