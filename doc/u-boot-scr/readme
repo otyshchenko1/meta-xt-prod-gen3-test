@@ -1,0 +1,10 @@
+Simple example how to deal with the U-Boot scripts. Use existing script for flashing loaders to eMMC boot partition 1
+as an example.
+
+1. Use the following command to add an image header to script:
+   sudo mkimage -A arm64 -T script -C none -n 'Demo Script File' -d flash_loaders.txt flash_loaders.img
+2. Load script to desired memory address (example uses tftp to download script, but it can be stored elsewhere):
+   tftp 0x76000000 flash_loaders.img
+3. Run script:
+   source 0x76000000
+
