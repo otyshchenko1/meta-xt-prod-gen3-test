@@ -35,6 +35,10 @@ XT_QUIRK_PATCH_SRC_URI_rcar = "\
 XT_BB_LOCAL_CONF_FILE_rcar = "meta-xt-prod-extra/doc/local.conf.rcar-domd-image-weston"
 XT_BB_LAYERS_FILE_rcar = "meta-xt-prod-extra/doc/bblayers.conf.rcar-domd-image-weston"
 
+# Path to proprietary graphic modules pre built binaries.
+# Uncomment line below and set proper path.
+#XT_RCAR_EVAPROPRIETARY_DIR = ""
+
 GLES_VERSION_rcar = "1.9"
 
 configure_versions_rcar() {
@@ -43,9 +47,27 @@ configure_versions_rcar() {
     cd ${S}
     base_update_conf_value ${local_conf} PREFERRED_VERSION_xen "4.10.0+git\%"
     base_update_conf_value ${local_conf} PREFERRED_VERSION_u-boot_rcar "v2015.04\%"
-    base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-user-module ${GLES_VERSION}
-    base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-kernel-module ${GLES_VERSION}
-    base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-module-egl-headers ${GLES_VERSION}
+    if [ -z ${XT_RCAR_EVAPROPRIETARY_DIR} ];then
+        base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-user-module ${GLES_VERSION}
+        base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-kernel-module ${GLES_VERSION}
+        base_update_conf_value ${local_conf} PREFERRED_VERSION_gles-module-egl-headers ${GLES_VERSION}
+    else
+        base_update_conf_value ${local_conf} PREFERRED_PROVIDER_virtual/libgles2 "rcar-proprietary-graphic"
+        base_update_conf_value ${local_conf} PREFERRED_PROVIDER_virtual/egl "rcar-proprietary-graphic"
+        base_set_conf_value ${local_conf} PREFERRED_PROVIDER_kernel-module-pvrsrvkm "rcar-proprietary-graphic"
+        base_set_conf_value ${local_conf} PREFERRED_PROVIDER_kernel-module-dc-linuxfb "rcar-proprietary-graphic"
+        base_set_conf_value ${local_conf} PREFERRED_PROVIDER_kernel-module-gles "rcar-proprietary-graphic"
+        base_set_conf_value ${local_conf} PREFERRED_PROVIDER_gles-user-module "rcar-proprietary-graphic"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-images-vgpu/recipes-graphics/gles-module/"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-extra/recipes-graphics/gles-module/"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-vgpu/recipes-graphics/gles-module/"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-vgpu/recipes-graphics/mesa/"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-vgpu/recipes-graphics/wayland/"
+        base_add_conf_value ${local_conf} BBMASK "meta-xt-prod-vgpu/recipes-kernel/kernel-module-gles/"
+        base_add_conf_value ${local_conf} BBMASK "meta-renesas/meta-rcar-gen3/recipes-kernel/kernel-module-gles/"
+        base_add_conf_value ${local_conf} BBMASK "meta-renesas/meta-rcar-gen3/recipes-graphics/gles-module/"
+        xt_unpack_proprietary
+    fi
 
     # HACK: force ipk instead of rpm b/c it makes troubles to PVR UM build otherwise
     base_update_conf_value ${local_conf} PACKAGE_CLASSES "package_ipk"
