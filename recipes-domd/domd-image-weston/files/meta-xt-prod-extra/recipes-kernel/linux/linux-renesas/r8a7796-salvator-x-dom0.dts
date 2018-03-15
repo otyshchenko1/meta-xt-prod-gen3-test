@@ -1053,15 +1053,7 @@
 	status = "okay";
 };
 
-&ipmmu_ir {
-	status = "okay";
-};
-
 &ipmmu_hc {
-	status = "okay";
-};
-
-&ipmmu_rt {
 	status = "okay";
 };
 
