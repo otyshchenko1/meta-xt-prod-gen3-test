@@ -51,6 +51,20 @@
 	soc {
 		//this must point to Xen interrupt-parent
 		interrupt-parent = <PHANDLE_GIC>;
+
+		/*
+		 * CPU's thermal zone (tsc3) is broken and can't be registered since
+		 * the "cooling-maps" constains "cooling-device" property
+		 * expecting a57_0 node to be present, but the latter isn't present in
+		 * the guest device tree. To avoid annoying message in runtime
+		 * "rcar_gen3_thermal e61a8000.thermal: Can't register thermal zone"
+		 * we have to drop "cooling-map" completely.
+		 */
+		thermal-zones {
+			sensor-thermal3 {
+				/delete-node/cooling-maps;
+			};
+		};
 	};
 
 	passthrough {
