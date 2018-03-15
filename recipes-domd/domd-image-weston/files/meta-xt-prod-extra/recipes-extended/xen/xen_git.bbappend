@@ -8,7 +8,7 @@ XEN_REL_rcar = "4.10"
 
 SRCREV_rcar = "${AUTOREV}"
 
-SRC_URI_rcar = "git://github.com/xen-troops/xen.git;protocol=https;branch=master"
+SRC_URI_rcar = "git://github.com/xen-troops/xen.git;protocol=https;branch=RELEASE-4.10.0-xt0.2.gen3-test"
 
 ################################################################################
 # Generic
