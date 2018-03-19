@@ -19,6 +19,11 @@ It also contains different para-virtualized (PV) backends running inside it in o
 3. Machine dependent simple guest domain named "DomU". It has different PV frontends running and
 doesn't have any HW assigned except GPU. The latter is shared between "DomD" and "DomU" in current setup.
 
+It worth to mention that IPMMU for GPU is enabled in case of M3N only. For other SoCs the PVRKM performs IPA to PA
+translations using a hypercall to hypervisor.
+
+The ARM TF was patched to bring up all available CPU cores.
+
 Build:
 ======
 Our build system uses set of additional meta layers and tools.
@@ -175,10 +180,21 @@ workspace_base
 Images are located at:
 - Domain-0:
 workspace_base/build/tmp/deploy/dom0-image-thin-initramfs/images/generic-armv8-xt
+Here we get a part of boot images:
+  - uInitramfs - thin-initramfs for Domain-0
+  - Image - Kernel image for Domain-0
 - DomD:
 workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE-NAME-xt
+Here we get a part of boot images, all bootloader images and rootfs image for DomD:
+  - xen-uImage - Xen main image
+  - xenpolicy - special image for Xen usage
+  - dom0.dtb - device-tree image for Domain-0
+  - bootloader images in both binary and srec formats.
+  - core-image-weston-MACHINE_NAME-xt.tar.bz2 - rootfs image for DomD
 - DomU:
 workspace_base/build/tmp/deploy/domu-image-weston/images/MACHINE-NAME-xt
+Here we get a rootfs image for DomU:
+  - core-image-weston-MACHINE_NAME-xt.tar.bz2 - rootfs image for DomU
 
 Build logs are located at:
 - Domain-0:
@@ -214,4 +230,95 @@ all images on a storage device such as eMMC or SD card.
 Different helpers scripts and docs are located at:
 workspace_base/meta-xt-prod-gen3-test/doc/
 
-[TODO: Should be completed]
+Let's consider available boot options in details.
+
+1. Using a storage device.
+In order to boot system using a storage device, required storage device should be prepared
+and flashed beforehand. The mk_sdcard_image.sh script is intended to help with that:
+
+sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /IMAGE_FILE
+
+Where, IMAGE_FOLDER is a path to a folder where artifacts live (in the context of this document
+it is a "deploy" directory) and IMAGE_FILE is an output image file or physical device how
+it is appears in the filesystem (/dev/sdx).
+
+1.1 In case of SDx card booting we just have to insert SD card to a Host machine and run a script,
+the latter will do all required actions automatically. All what we need to care about is to write
+proper environment variables from U-Boot command line (boot_dev/bootcmd) according to the chosen SDx.
+See workspace_base/meta-xt-prod-gen3-test/doc/u-boot-env-salvator-x.txt for details.
+
+1.2 In case of eMMC booting, we have to have an access to it in order to flash images.
+It is going to be not quite easy as for removable SD card, but the one of the possible ways is
+to prepare the image blob using the same script, copy resulting blob to NFS root directory,
+set system to boot via NFS, go to a DomD on target (where eMMC device is available)
+and using "dd" command just copy blob to eMMC.
+
+For example,
+
+prepare an image blob:
+sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /home/emmc.img
+
+and then run on target:
+dd if=/home/emmc.img of=/dev/mmcblk0
+
+After getting eMMC flashed we have to choose it to be an boot device in a similar way as it is done
+for SD card.
+See u-boot-env-salvator-x.txt for details.
+
+2. Using TFTP boot with NFS root.
+In case of TFTP booting we have to copy the following boot images into target-accessible TFTP boot
+directory and extract guest domain rootfs images for being an NFS root directories for guest domains.
+See https://github.com/xen-troops/manifests/wiki on how to setup TFTP, NFS, etc.
+
+For example,
+
+copy boot images to TFTP boot directory:
+sudo mkdir /srv
+cd workspace_base/build/tmp/deploy/dom0-image-thin-initramfs/images/generic-armv8-xt/
+sudo cp uInitramfs /srv/
+sudo cp Image /srv/
+cd workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE_NAME-xt/
+sudo cp dom0.dtb /srv/
+sudo cp xenpolicy /srv/
+sudo cp xen-uImage /srv/
+
+extract DomD rootfs images:
+sudo mkdir /srv/domd
+cd workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE_NAME-xt/
+sudo tar -xf core-image-weston-MACHINE_NAME-xt.tar.bz2 -C /srv/domd/
+
+extract DomU rootfs images:
+sudo mkdir /srv/domu
+cd workspace_base/build/tmp/deploy/domu-image-weston/images/MACHINE_NAME-xt/
+sudo tar -xf core-image-weston-MACHINE_NAME-xt.tar.bz2 -C /srv/domu/
+
+It worth mentioning that some changes to domain config files are necessary to switch between NFS
+and any of storage devices.
+
+For doing that:
+cd workspace_base/meta-xt-prod-gen3-test/recipes-dom0/dom0-image-thin-initramfs/files/meta-xt-prod-extra/recipes-extended/guest-addons/files/
+
+- Edit domd-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS.
+- Edit domu-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS and comment "disk" option.
+
+So, as you can see, varying U-Boot's "boot_dev" and "bootcmd" environment variables
+and domain config's "extra" and "disk" options it is possible to choose  different boot device
+for each system component. For example, boot system using TFTP and then use SD card for guest domains.
+
+Additional script available in the product.
+1. uirfs.sh.
+This script is intended to pack/unpack uInitramfs for Domain-0. It might be helpful since uInitramfs
+contains a lot of things which may changed during testing. The "xt" directory shipes all guest domain
+configs, device-tree and Kernel images, etc.
+
+For example,
+
+unpack uInitramfs:
+cd /srv
+sudo mkdir initramfs
+sudo ./uirfs.sh unpack uInitramfs initramfs
+
+modify it's components
+
+pack it back:
+sudo ./uirfs.sh pack uInitramfs initramfs
