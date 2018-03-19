@@ -63,8 +63,9 @@ directory.
 
 For example,
 
- - R-Car_Gen3_Series_Evaluation_Software_Package_for_Linux-20170427.zip
- - R-Car_Gen3_Series_Evaluation_Software_Package_of_Linux_Drivers-20170427.zip
+ - r8a7795-rcar-proprietary-graphic.tar.gz
+ - r8a7796-rcar-proprietary-graphic.tar.gz
+ - r8a77965-rcar-proprietary-graphic.tar.gz
 
 7. Edit local.conf:
 
