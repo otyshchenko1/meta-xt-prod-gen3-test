@@ -20,9 +20,11 @@ inherit update-rc.d systemd
 INITSCRIPT_NAME = "pvrinit"
 INITSCRIPT_PARAMS = "start 7 5 2 . stop 62 0 1 6 ."
 SYSTEMD_SERVICE_${PN} = "rc.pvr.service"
+KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_BUILDDIR}/kernel-abiversion')}"
 
 do_populate_lic[noexec] = "1"
 do_compile[noexec] = "1"
+do_install[depends] += "linux-renesas:do_shared_workdir"
 
 do_install() {
     # Install configuration files
@@ -78,8 +80,8 @@ do_install() {
     # Install kernel module gles
     install -d ${D}/${sysconfdir}/modprobe.d
     install -d ${D}/${sysconfdir}/modules-load.d
-    install -d ${D}/lib/modules/4.9.0-yocto-standard/extra
-    install -m 644 ${S}/lib/modules/4.9.0-yocto-standard/extra/pvrsrvkm.ko ${D}/lib/modules/4.9.0-yocto-standard/extra
+    install -d ${D}/lib/modules/${KERNEL_VERSION}/extra
+    install -m 644 ${S}/lib/modules/${KERNEL_VERSION}/extra/pvrsrvkm.ko ${D}/lib/modules/${KERNEL_VERSION}/extra
 }
 
 PACKAGES = "\
@@ -89,7 +91,7 @@ PACKAGES = "\
 FILES_${PN} = " \
     ${sysconfdir}/* \
     ${libdir}/* \
-    /lib/modules/4.9.0-yocto-standard/extra/* \
+    /lib/modules/${KERNEL_VERSION}/extra/* \
     /lib/firmware/rgx.fw* \
     /usr/local/bin/* \
     ${exec_prefix}/bin/* \
