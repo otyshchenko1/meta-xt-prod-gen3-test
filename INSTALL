@@ -296,11 +296,21 @@ sudo tar -xf core-image-weston-MACHINE_NAME-xt.tar.bz2 -C /srv/domu/
 It worth mentioning that some changes to domain config files are necessary to switch between NFS
 and any of storage devices.
 
-For doing that:
-cd workspace_base/meta-xt-prod-gen3-test/recipes-dom0/dom0-image-thin-initramfs/files/meta-xt-prod-extra/recipes-extended/guest-addons/files/
+There are two options for doing that. Either by modifying source files followed by rebuilding
+the whole Domain-0 or by modifying domain config files right in a built uInitramfs image which
+implies unpacking an image before and packing it back after (an "uirfs.sh" script which
+we will consider down the document is intended to help with that).
+
+In order to modify sources go to the files location in inner yocto:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-thin-initramfs/1.0-r0/repo/meta-xt-prod-extra/recipes-extended/guest-addons/files
 
 - Edit domd-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS.
 - Edit domu-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS and comment "disk" option.
+
+and then rebuild Domain-0 manually:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-thin-initramfs/1.0-r0/repo/
+source poky/oe-init-build-env
+bitbake core-image-thin-initramfs
 
 So, as you can see, varying U-Boot's "boot_dev" and "bootcmd" environment variables
 and domain config's "extra" and "disk" options it is possible to choose  different boot device
@@ -319,7 +329,9 @@ cd /srv
 sudo mkdir initramfs
 sudo ./uirfs.sh unpack uInitramfs initramfs
 
-modify it's components
+Modify it's components if needed.
+For example, domain config files located at:
+/srv/initramfs_m3n/xt/dom.cfg/
 
 pack it back:
 sudo ./uirfs.sh pack uInitramfs initramfs
