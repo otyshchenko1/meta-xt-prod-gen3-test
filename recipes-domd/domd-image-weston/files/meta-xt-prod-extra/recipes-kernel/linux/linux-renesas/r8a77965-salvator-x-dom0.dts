@@ -1093,7 +1093,7 @@
 };
 
 &gsx {
-	xen,coproc;
+	xen,passthrough;
 };
 
 /* ============================ Xen pass through section ============================ */
