@@ -1,0 +1,338 @@
+Prerequisites:
+==============
+1. Python Git: sudo apt-get install python-git
+2. Google repo: https://source.android.com/source/downloading
+3. Checked with Python v 2.7.12, but other should also work
+
+About:
+======
+Gen3-test product is based on Renesas BSP and Xen hypervisor. It contains a set of features required to have
+both Display and GPU support in several domains at the same time (device passthrough, PVDRM, VGPU, etc).
+
+There are three domains which are running on top of Xen:
+1. Generic machine independent control domain named "Domain-0". This initramfs based domain is responsible
+for managing VMs only (create/destroy/reboot guest domains). There is no HW assigned to this domain.
+2. Machine dependent driver domain named "DomD". Almost all HW are assigned to this domain.
+As this domain is not 1:1 mapped, Xen controls IPMMU to do a proper address translations (IPA to PA) for DMA masters.
+It also contains different para-virtualized (PV) backends running inside it in order to provide guest domains
+(without HW assigned) with different services such as Audio, Display, Net, Block, etc.
+3. Machine dependent simple guest domain named "DomU". It has different PV frontends running and
+doesn't have any HW assigned except GPU. The latter is shared between "DomD" and "DomU" in current setup.
+
+It worth to mention that IPMMU for GPU is enabled in case of M3N only. For other SoCs the PVRKM performs IPA to PA
+translations using a hypercall to hypervisor.
+
+The ARM TF was patched to bring up all available CPU cores.
+
+Build:
+======
+Our build system uses set of additional meta layers and tools.
+1. Please, clone the following build scripts, master branch:
+
+git clone https://github.com/xen-troops/build-scripts.git
+cd build-scripts
+
+2. In the build-scripts directory you will find a sample configuration
+file xt-build-server.cfg:
+
+cp xt-build-server.cfg xt-gen3-test.cfg
+
+3. Edit it to fit your environment: the variables we need to change
+are under [path] section. Please set:
+ - workspace_base_dir: change it to point to the place where the build will happen
+ - workspace_storage_base_dir: change it to where downloads and other files will be put
+
+For example,
+
+workspace_base_dir = /home/workspace_base
+workspace_storage_base_dir = /home/workspace_storage_base
+
+4. Run the build script for current stable release:
+
+python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product gen3-test --with-local-conf --config xt-gen3-test.cfg
+
+Hereafter the supported MACHINE_NAMEs are:
+- salvator-x-h3  (Salvator-X board with H3 ES2.0 SoC installed)
+- salvator-x-h3-4x2g (Salvator-X board with H3 ES3.0 SoC installed)
+- salvator-x-m3  (Salvator-X board with M3 SoC installed)
+
+5. After that you will have all the build environment setup at workspace_base_dir
+directory.
+
+6. Download and copy EVA proprietary packages to your local filesystem at some directory:
+
+For example,
+
+ - r8a7795-rcar-proprietary-graphic.tar.gz
+ - r8a7796-rcar-proprietary-graphic.tar.gz
+
+7. Edit local.conf:
+
+workspace_base/build/conf/local.conf
+
+and append the following:
+
+XT_GUESTS_INSTALL = "domu"
+XT_GUESTS_BUILD = "domu"
+XT_RCAR_EVAPROPRIETARY_DIR = "/path/to/eva/archives"
+
+with the correct path to the archives set.
+
+8. Now, to build the images you can run the same command as in 4) but with
+additional argument --continue-build:
+
+python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product gen3-test --with-local-conf --config xt-gen3-test.cfg --continue-build
+
+9. You are done. The artifacts of the build are located at workspace_base directory:
+workspace_base
+├── build
+│   ├── conf
+│   │
+│   └── tmp
+│       ├── log
+│       │   ├── cooker
+│       │   │   └── MACHINE_NAME
+│       │   │
+│       │   ├── dom0-image-thin-initramfs
+│       │   │   └── cooker
+│       │   │       └── generic-armv8-xt
+│       │   │
+│       │   ├── domd-image-weston
+│       │   │   └── cooker
+│       │   │       └── MACHINE_NAME-xt
+│       │   │
+│       │   ├── domu-image-weston
+│       │       └── cooker
+│       │           └── MACHINE_NAME-xt
+│       │
+│       ├── deploy
+│       │   ├── dom0-image-thin-initramfs
+│       │   │   └── images
+│       │   │       └── generic-armv8-xt
+│       │   │
+│       │   ├── domd-image-weston
+│       │   │   └── images
+│       │   │       └── MACHINE_NAME-xt
+│       │   │
+│       │   ├── domu-image-weston
+│       │   │   └── images
+│       │   │       └── MACHINE_NAME-xt
+│       │   │
+│       │   └── mk_sdcard_image.sh
+│       │
+│       └── work
+│           └── x86_64-xt-linux
+│               ├── dom0-image-thin-initramfs
+│               │   └── 1.0-r0
+│               │       └── repo
+│               │           ├── build
+│               │           ├── meta-linaro
+│               │           ├── meta-openembedded
+│               │           ├── meta-xt-images-generic-armv8
+│               │           ├── meta-virtualization
+│               │           ├── meta-xt-images-extra
+│               │           ├── meta-xt-prod-extra
+│               │           ├── meta-xt-images-domx
+│               │           ├── poky
+│               │
+│               ├── domd-image-weston
+│               │   └── 1.0-r0
+│               │       └── repo
+│               │           ├── build
+│               │           ├── meta-clang
+│               │           ├── meta-linaro
+│               │           ├── meta-openembedded
+│               │           ├── meta-renesas
+│               │           ├── meta-selinux
+│               │           ├── meta-virtualization
+│               │           ├── meta-xt-images-domx
+│               │           ├── meta-xt-images-extra
+│               │           ├── meta-xt-images-rcar-gen3
+│               │           ├── meta-xt-images-vgpu
+│               │           ├── meta-xt-prod-extra
+│               │           ├── meta-xt-prod-vgpu
+│               │           ├── poky
+│               │           ├── proprietary
+│               │
+│               ├── domu-image-weston
+│               │   └── 1.0-r0
+│               │       └── repo
+│               │           ├── build
+│               │           ├── meta-clang
+│               │           ├── meta-linaro
+│               │           ├── meta-openembedded
+│               │           ├── meta-renesas
+│               │           ├── meta-selinux
+│               │           ├── meta-virtualization
+│               │           ├── meta-xt-images-domx
+│               │           ├── meta-xt-images-extra
+│               │           ├── meta-xt-images-rcar-gen3
+│               │           ├── meta-xt-images-vgpu
+│               │           ├── meta-xt-prod-extra
+│               │           ├── meta-xt-prod-vgpu
+│               │           ├── poky
+│               │           ├── proprietary
+│               │
+│               ├── xt-image
+│
+├── meta-xt-images
+├── meta-xt-prod-gen3-test
+├── xt-distro
+
+Images are located at:
+- Domain-0:
+workspace_base/build/tmp/deploy/dom0-image-thin-initramfs/images/generic-armv8-xt
+Here we get a part of boot images:
+  - uInitramfs - thin-initramfs for Domain-0
+  - Image - Kernel image for Domain-0
+- DomD:
+workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE-NAME-xt
+Here we get a part of boot images, all bootloader images and rootfs image for DomD:
+  - xen-uImage - Xen main image
+  - xenpolicy - special image for Xen usage
+  - dom0.dtb - device-tree image for Domain-0
+  - bootloader images in both binary and srec formats.
+  - core-image-weston-MACHINE_NAME-xt.tar.bz2 - rootfs image for DomD
+- DomU:
+workspace_base/build/tmp/deploy/domu-image-weston/images/MACHINE-NAME-xt
+Here we get a rootfs image for DomU:
+  - core-image-weston-MACHINE_NAME-xt.tar.bz2 - rootfs image for DomU
+
+Build logs are located at:
+- Domain-0:
+workspace_base/build/tmp/log/dom0-image-thin-initramfs/cooker/generic-armv8-xt
+- DomD:
+workspace_base/build/tmp/log/domd-image-weston/cooker/MACHINE-NAME-xt
+- DomU:
+workspace_base/build/tmp/log/domu-image-weston/cooker/MACHINE-NAME-xt
+
+10. If one wants to build any domain's images by hand, at the time of development
+for instance, it is possible by going into desired directory and using poky to build:
+
+- For building Domain-0:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-thin-initramfs/1.0-r0/repo/
+- For building DomD:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/domd-image-weston/1.0-r0/repo/
+- For building DomU:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/domu-image-weston/1.0-r0/repo/
+
+source poky/oe-init-build-env
+
+- For building Domain-0:
+bitbake core-image-thin-initramfs
+
+- For building DomD or DomU:
+bitbake core-image-weston
+
+Usage:
+======
+It is possible to run system either using TFTP boot with NFS root or keeping
+all images on a storage device such as eMMC or SD card.
+
+Different helpers scripts and docs are located at:
+workspace_base/meta-xt-prod-gen3-test/doc/
+
+Let's consider available boot options in details.
+
+1. Using a storage device.
+In order to boot system using a storage device, required storage device should be prepared
+and flashed beforehand. The mk_sdcard_image.sh script is intended to help with that:
+
+sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /IMAGE_FILE
+
+Where, IMAGE_FOLDER is a path to a folder where artifacts live (in the context of this document
+it is a "deploy" directory) and IMAGE_FILE is an output image file or physical device how
+it is appears in the filesystem (/dev/sdx).
+
+1.1 In case of SDx card booting we just have to insert SD card to a Host machine and run a script,
+the latter will do all required actions automatically. All what we need to care about is to write
+proper environment variables from U-Boot command line (boot_dev/bootcmd) according to the chosen SDx.
+See workspace_base/meta-xt-prod-gen3-test/doc/u-boot-env-salvator-x.txt for details.
+
+1.2 In case of eMMC booting, we have to have an access to it in order to flash images.
+It is going to be not quite easy as for removable SD card, but the one of the possible ways is
+to prepare the image blob using the same script, copy resulting blob to NFS root directory,
+set system to boot via NFS, go to a DomD on target (where eMMC device is available)
+and using "dd" command just copy blob to eMMC.
+
+For example,
+
+prepare an image blob:
+sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /home/emmc.img
+
+and then run on target:
+dd if=/home/emmc.img of=/dev/mmcblk0
+
+After getting eMMC flashed we have to choose it to be an boot device in a similar way as it is done
+for SD card.
+See u-boot-env-salvator-x.txt for details.
+
+2. Using TFTP boot with NFS root.
+In case of TFTP booting we have to copy the following boot images into target-accessible TFTP boot
+directory and extract guest domain rootfs images for being an NFS root directories for guest domains.
+See https://github.com/xen-troops/manifests/wiki on how to setup TFTP, NFS, etc.
+
+For example,
+
+copy boot images to TFTP boot directory:
+sudo mkdir /srv
+cd workspace_base/build/tmp/deploy/dom0-image-thin-initramfs/images/generic-armv8-xt/
+sudo cp uInitramfs /srv/
+sudo cp Image /srv/
+cd workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE_NAME-xt/
+sudo cp dom0.dtb /srv/
+sudo cp xenpolicy /srv/
+sudo cp xen-uImage /srv/
+
+extract DomD rootfs images:
+sudo mkdir /srv/domd
+cd workspace_base/build/tmp/deploy/domd-image-weston/images/MACHINE_NAME-xt/
+sudo tar -xf core-image-weston-MACHINE_NAME-xt.tar.bz2 -C /srv/domd/
+
+extract DomU rootfs images:
+sudo mkdir /srv/domu
+cd workspace_base/build/tmp/deploy/domu-image-weston/images/MACHINE_NAME-xt/
+sudo tar -xf core-image-weston-MACHINE_NAME-xt.tar.bz2 -C /srv/domu/
+
+It worth mentioning that some changes to domain config files are necessary to switch between NFS
+and any of storage devices.
+
+There are two options for doing that. Either by modifying source files followed by rebuilding
+the whole Domain-0 or by modifying domain config files right in a built uInitramfs image which
+implies unpacking an image before and packing it back after (an "uirfs.sh" script which
+we will consider down the document is intended to help with that).
+
+In order to modify sources go to the files location in inner yocto:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-thin-initramfs/1.0-r0/repo/meta-xt-prod-extra/recipes-extended/guest-addons/files
+
+- Edit domd-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS.
+- Edit domu-MACHINE_NAME.cfg to uncomment "extra" option which corresponds to NFS and comment "disk" option.
+
+and then rebuild Domain-0 manually:
+cd workspace_base/build/tmp/work/x86_64-xt-linux/dom0-image-thin-initramfs/1.0-r0/repo/
+source poky/oe-init-build-env
+bitbake core-image-thin-initramfs
+
+So, as you can see, varying U-Boot's "boot_dev" and "bootcmd" environment variables
+and domain config's "extra" and "disk" options it is possible to choose  different boot device
+for each system component. For example, boot system using TFTP and then use SD card for guest domains.
+
+Additional script available in the product.
+1. uirfs.sh.
+This script is intended to pack/unpack uInitramfs for Domain-0. It might be helpful since uInitramfs
+contains a lot of things which may changed during testing. The "xt" directory shipes all guest domain
+configs, device-tree and Kernel images, etc.
+
+For example,
+
+unpack uInitramfs:
+cd /srv
+sudo mkdir initramfs
+sudo ./uirfs.sh unpack uInitramfs initramfs
+
+Modify it's components if needed.
+For example, domain config files located at:
+/srv/initramfs_m3n/xt/dom.cfg/
+
+pack it back:
+sudo ./uirfs.sh pack uInitramfs initramfs
