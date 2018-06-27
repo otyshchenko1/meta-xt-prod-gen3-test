@@ -19,8 +19,8 @@ It also contains different para-virtualized (PV) backends running inside it in o
 3. Machine dependent simple guest domain named "DomU". It has different PV frontends running and
 doesn't have any HW assigned except GPU. The latter is shared between "DomD" and "DomU" in current setup.
 
-It worth to mention that IPMMU for GPU is enabled in case of M3N only. For other SoCs the PVRKM performs IPA to PA
-translations using a hypercall to hypervisor.
+It worth to mention that IPMMU for GPU is enabled in case of H3 ES3.0 only. For other supported SoCs the PVRKM
+performs IPA to PA translations using a hypercall to hypervisor.
 
 The ARM TF was patched to bring up all available CPU cores.
 
