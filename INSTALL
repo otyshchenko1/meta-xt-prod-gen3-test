@@ -55,6 +55,9 @@ Hereafter the supported MACHINE_NAMEs are:
 - salvator-x-h3  (Salvator-X board with H3 ES2.0 SoC installed)
 - salvator-x-h3-4x2g (Salvator-X board with H3 ES3.0 SoC installed)
 - salvator-x-m3  (Salvator-X board with M3 SoC installed)
+- salvator-xs-h3  (Salvator-XS board with H3 ES2.0 SoC installed)
+- salvator-xs-h3-2x2g (Salvator-XS board with H3 ES3.0 SoC installed)
+- salvator-xs-h3-4x2g (Salvator-XS board with H3 ES3.0 SoC installed)
 
 5. After that you will have all the build environment setup at workspace_base_dir
 directory.
@@ -63,8 +66,16 @@ directory.
 
 For example,
 
- - r8a7795-rcar-proprietary-graphic.tar.gz
- - r8a7796-rcar-proprietary-graphic.tar.gz
+ - rcar-proprietary-graphic-salvator-x-h3-xt-domd.tar.gz
+ - rcar-proprietary-graphic-salvator-x-h3-xt-domu.tar.gz
+
+Due to the fact that the SoC is not actually changed for Salvator-XS boards,
+you could reuse already provided binaries by making symlinks to corresponding archives.
+
+For example,
+
+ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domd.tar.gz rcar-proprietary-graphic-salvator-xs-h3-xt-domd.tar.gz
+ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domu.tar.gz rcar-proprietary-graphic-salvator-xs-h3-xt-domu.tar.gz
 
 7. Edit local.conf:
 
