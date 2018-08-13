@@ -126,7 +126,7 @@
 };
 
 &ipmmu_vc0 {
-	compatible = "renesas,ipmmu-r8a7795";
+	compatible = "renesas,ipmmu-r8a7796";
 	status = "okay";
 };
 

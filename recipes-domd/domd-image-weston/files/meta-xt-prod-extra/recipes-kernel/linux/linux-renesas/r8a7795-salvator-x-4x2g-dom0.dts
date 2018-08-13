@@ -330,11 +330,15 @@
 	iommus = <&ipmmu_hc 12>;
 };
 
-&usb_dmac0 {
+&usb3_peri0 {
+	iommus = <&ipmmu_hc 13>;
+};
+
+&usb_dmac2 {
 	iommus = <&ipmmu_hc 14>;
 };
 
-&usb_dmac1 {
+&usb_dmac3 {
 	iommus = <&ipmmu_hc 15>;
 };
 
