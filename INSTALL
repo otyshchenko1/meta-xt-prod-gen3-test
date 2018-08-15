@@ -58,6 +58,8 @@ Hereafter the supported MACHINE_NAMEs are:
 - salvator-xs-h3  (Salvator-XS board with H3 ES2.0 SoC installed)
 - salvator-xs-h3-2x2g (Salvator-XS board with H3 ES3.0 SoC installed)
 - salvator-xs-h3-4x2g (Salvator-XS board with H3 ES3.0 SoC installed)
+- h3ulcb (H3ULCB board with H3 ES2.0 SoC installed)
+- m3ulcb (M3ULCB board with M3 SoC installed)
 
 5. After that you will have all the build environment setup at workspace_base_dir
 directory.
@@ -69,13 +71,23 @@ For example,
  - rcar-proprietary-graphic-salvator-x-h3-xt-domd.tar.gz
  - rcar-proprietary-graphic-salvator-x-h3-xt-domu.tar.gz
 
-Due to the fact that the SoC is not actually changed for Salvator-XS boards,
+Due to the fact that the SoC is not actually changed for Salvator-XS and H3ULCB/M3ULCB boards,
 you could reuse already provided binaries by making symlinks to corresponding archives.
 
-For example,
+For example (Salvator-XS case),
 
 ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domd.tar.gz rcar-proprietary-graphic-salvator-xs-h3-xt-domd.tar.gz
 ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domu.tar.gz rcar-proprietary-graphic-salvator-xs-h3-xt-domu.tar.gz
+
+For example (H3ULCB case),
+
+ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domd.tar.gz rcar-proprietary-graphic-h3ulcb-xt-domd.tar.gz
+ln -s rcar-proprietary-graphic-salvator-x-h3-xt-domu.tar.gz rcar-proprietary-graphic-h3ulcb-xt-domu.tar.gz
+
+For example (M3ULCB case),
+
+ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domd.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domd.tar.gz
+ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domu.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domu.tar.gz
 
 7. Edit local.conf:
 
@@ -129,7 +141,7 @@ workspace_base
 │       │   │   └── images
 │       │   │       └── MACHINE_NAME-xt
 │       │   │
-│       │   └── mk_sdcard_image.sh
+│       │   └── mk_sdcard_image_domu.sh
 │       │
 │       └── work
 │           └── x86_64-xt-linux
@@ -247,9 +259,9 @@ Let's consider available boot options in details.
 
 1. Using a storage device.
 In order to boot system using a storage device, required storage device should be prepared
-and flashed beforehand. The mk_sdcard_image.sh script is intended to help with that:
+and flashed beforehand. The mk_sdcard_image_domu.sh script is intended to help with that:
 
-sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /IMAGE_FILE
+sudo ./mk_sdcard_image_domu.sh -p /IMAGE_FOLDER -d /IMAGE_FILE
 
 Where, IMAGE_FOLDER is a path to a folder where artifacts live (in the context of this document
 it is a "deploy" directory) and IMAGE_FILE is an output image file or physical device how
@@ -269,14 +281,14 @@ and using "dd" command just copy blob to eMMC.
 For example,
 
 prepare an image blob:
-sudo ./mk_sdcard_image.sh -p /IMAGE_FOLDER -d /home/emmc.img
+sudo ./mk_sdcard_image_domu.sh -p /IMAGE_FOLDER -d /home/emmc.img
 
 and then run on target:
 dd if=/home/emmc.img of=/dev/mmcblk0
 
 After getting eMMC flashed we have to choose it to be an boot device in a similar way as it is done
 for SD card.
-See u-boot-env-salvator-x.txt for details.
+See u-boot-env.txt for details.
 
 2. Using TFTP boot with NFS root.
 In case of TFTP booting we have to copy the following boot images into target-accessible TFTP boot
@@ -343,7 +355,7 @@ sudo ./uirfs.sh unpack uInitramfs initramfs
 
 Modify it's components if needed.
 For example, domain config files located at:
-/srv/initramfs_m3n/xt/dom.cfg/
+/srv/initramfs/xt/dom.cfg/
 
 pack it back:
 sudo ./uirfs.sh pack uInitramfs initramfs
