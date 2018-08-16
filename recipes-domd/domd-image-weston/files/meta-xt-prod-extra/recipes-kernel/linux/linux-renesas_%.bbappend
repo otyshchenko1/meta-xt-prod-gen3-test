@@ -132,6 +132,21 @@ KERNEL_DEVICETREE_salvator-x-m3-xt = " \
     renesas/r8a7796-salvator-x-domu.dtb \
 "
 
+##############################################################################
+# H3ULCB
+###############################################################################
+SRC_URI_append_h3ulcb-xt = " \
+    file://r8a7795-h3ulcb-dom0.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+    file://r8a7795-h3ulcb-domd.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+    file://r8a7795-h3ulcb-domu.dts;subdir=git/arch/${ARCH}/boot/dts/renesas \
+"
+
+KERNEL_DEVICETREE_h3ulcb-xt = " \
+    renesas/r8a7795-h3ulcb-dom0.dtb \
+    renesas/r8a7795-h3ulcb-domd.dtb \
+    renesas/r8a7795-h3ulcb-domu.dtb \
+"
+
 do_deploy_append() {
     for DTB in ${KERNEL_DEVICETREE}
         do
