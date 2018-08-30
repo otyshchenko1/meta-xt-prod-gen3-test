@@ -1,4 +1,4 @@
 RENESAS_BSP_URL = "git://github.com/xen-troops/linux.git"
 
-BRANCH = "master"
-SRCREV = "d6ea261d10b1f7eac577210761b7b7ce9f5f29d6"
+BRANCH = "v4.14-rcar-3.7.0-xt0.1"
+SRCREV = "${AUTOREV}"

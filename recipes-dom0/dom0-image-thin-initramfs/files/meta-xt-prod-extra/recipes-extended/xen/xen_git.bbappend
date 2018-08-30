@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 ################################################################################
 XEN_REL = "4.10"
 PV = "${XEN_REL}.0+git${SRCPV}"
-SRCREV = "be1f7ea9e535fb97688baa28dd9ef92a5d4fc52d"
+SRCREV = "${AUTOREV}"
 
 SRC_URI = " \
     git://github.com/xen-troops/xen.git;protocol=https;branch=master \
