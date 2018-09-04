@@ -3,7 +3,8 @@ require inc/xt_shared_env.inc
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 BRANCH = "master"
-SRCREV = "${AUTOREV}"
+SRCREV = "c7996d63cf48edb65ad081596a4e93b7f66d7d4d"
+LINUX_VERSION = "4.14.35"
 
 SRC_URI = " \
     git://github.com/xen-troops/linux.git;branch=${BRANCH} \
