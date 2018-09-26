@@ -1,6 +1,6 @@
 require inc/xt_shared_env.inc
 
-BRANCH = "1.9/4991288"
+BRANCH = "perf_opt"
 SRCREV = "${AUTOREV}"
 
 SRC_URI_remove = " \
