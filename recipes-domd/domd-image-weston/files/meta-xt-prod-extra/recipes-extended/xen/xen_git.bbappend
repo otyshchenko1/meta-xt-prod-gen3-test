@@ -6,9 +6,9 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 XEN_REL_rcar = "4.10"
 PV = "${XEN_REL}.0+git${SRCPV}"
-SRCREV_rcar = "2ed10d55bceec95ba2d36bd476e9ce447eb616fe"
+SRCREV = "${AUTOREV}"
 
-SRC_URI_rcar = "git://github.com/xen-troops/xen.git;protocol=https;branch=master"
+SRC_URI_rcar = "git://github.com/xen-troops/xen.git;protocol=https;branch=perf_opt"
 
 # N.B. as Xen doesn't support partial .cfg as kernel does
 # we need to patch it to select disable IPMMU PGT sharing for
