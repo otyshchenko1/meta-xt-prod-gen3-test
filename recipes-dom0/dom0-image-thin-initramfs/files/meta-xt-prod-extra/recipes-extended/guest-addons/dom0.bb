@@ -19,6 +19,8 @@ DOM0_ALLOWED_PCPUS_salvator-x-m3-xt = "2-5"
 DOM0_ALLOWED_PCPUS_salvator-x-h3-xt = "4-7"
 DOM0_ALLOWED_PCPUS_salvator-xs-h3-xt = "4-7"
 DOM0_ALLOWED_PCPUS_salvator-x-h3-4x2g-xt = "4-7"
+DOM0_ALLOWED_PCPUS_salvator-xs-h3-4x2g-xt = "4-7"
+DOM0_ALLOWED_PCPUS_salvator-xs-h3-2x2g-xt = "4-7"
 DOM0_ALLOWED_PCPUS_m3ulcb-xt = "2-5"
 DOM0_ALLOWED_PCPUS_h3ulcb-xt = "4-7"
 
