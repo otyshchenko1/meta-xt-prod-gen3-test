@@ -9,6 +9,9 @@ EXTRA_OEMAKE += "PVRSRV_VZ_NUM_OSID=${XT_PVR_NUM_OSID}"
 # Auto load pvrsrvkm
 KERNEL_MODULE_AUTOLOAD_append = " pvrsrvkm"
 
+# Build GFX kernel module without suffix
+KERNEL_MODULE_PACKAGE_SUFFIX = ""
+
 FILES_${PN} = " \
     /lib/modules/${KERNEL_VERSION}/extra/pvrsrvkm.ko \
     ${sysconfdir}/modules-load.d \
