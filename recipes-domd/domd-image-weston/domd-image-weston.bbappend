@@ -2,8 +2,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../inc:"
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-domx:"
 
+XT_PRODUCT_NAME ?= "prod_gen3_test"
+
 SRC_URI = " \
-    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=prod_gen3_test/domd.xml;scmdata=keep \
+    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=${XT_PRODUCT_NAME}/domd.xml;scmdata=keep \
 "
 
 SRC_URI_append = " \

@@ -4,8 +4,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-domx:"
 
 do_configure[depends] += "domd-image-weston:do_domd_install_machine_overrides"
 
+XT_PRODUCT_NAME ?= "prod_gen3_test"
+
 SRC_URI = " \
-    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=prod_gen3_test/domu.xml;scmdata=keep \
+    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=${XT_PRODUCT_NAME}/domu.xml;scmdata=keep \
 "
 
 SRC_URI_append = " \
