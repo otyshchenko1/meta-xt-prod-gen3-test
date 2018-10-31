@@ -4,10 +4,16 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-domx:"
 
 do_configure[depends] += "domd-image-weston:do_domd_install_machine_overrides"
 
-XT_PRODUCT_NAME ?= "prod_gen3_test"
+XT_PRODUCT_NAME ?= "prod-gen3-test"
+
+python __anonymous () {
+    product_name = d.getVar('XT_PRODUCT_NAME', True)
+    folder_name = product_name.replace("-", "_")
+    d.setVar('XT_MANIFEST_FOLDER', folder_name)
+}
 
 SRC_URI = " \
-    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=${XT_PRODUCT_NAME}/domu.xml;scmdata=keep \
+    repo://github.com/xen-troops/manifests;protocol=https;branch=master;manifest=${XT_MANIFEST_FOLDER}/domu.xml;scmdata=keep \
 "
 
 SRC_URI_append = " \
