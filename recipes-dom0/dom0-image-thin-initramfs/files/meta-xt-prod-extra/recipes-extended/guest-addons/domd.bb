@@ -15,6 +15,7 @@ SRC_URI = "\
     file://domd-salvator-xs-h3.cfg \
     file://domd-salvator-xs-h3-4x2g.cfg \
     file://domd-salvator-x-h3-4x2g.cfg \
+    file://domd-salvator-xs-h3-2x2g.cfg \
     file://guest_domd \
 "
 
