@@ -22,6 +22,7 @@ SRC_URI = " \
     file://dm-salvator-x-h3.cfg \
     file://dm-m3ulcb.cfg \
     file://dm-h3ulcb.cfg \
+    file://dm-salvator-xs-m3n.cfg \
     file://eth0.network \
     file://xenbr0.netdev \
     file://xenbr0.network \
@@ -88,6 +89,7 @@ DM_CONFIG_salvator-xs-h3-2x2g-xt = "dm-salvator-x-h3.cfg"
 DM_CONFIG_salvator-x-h3-4x2g-xt = "dm-salvator-x-h3.cfg"
 DM_CONFIG_m3ulcb-xt = "dm-m3ulcb.cfg"
 DM_CONFIG_h3ulcb-xt = "dm-h3ulcb.cfg"
+DM_CONFIG_salvator-xs-m3n-xt = "dm-salvator-xs-m3n.cfg"
 
 do_install() {
     install -d ${D}${base_prefix}${XT_DIR_ABS_ROOTFS_SCRIPTS}
