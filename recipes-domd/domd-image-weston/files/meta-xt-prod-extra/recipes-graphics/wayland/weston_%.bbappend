@@ -86,3 +86,29 @@ do_install_append_r8a7796() {
             -i ${D}/${sysconfdir}/xdg/weston/weston.ini
     fi
 }
+
+do_install_append_r8a77965() {
+    sed -e '$a\\' \
+        -e '$a\[output]' \
+        -e '$a\name=HDMI-A-1' \
+        -i ${D}/${sysconfdir}/xdg/weston/weston.ini
+
+    install -d ${D}${sysconfdir}/udev/rules.d
+    install -m 0644 ${WORKDIR}/weston-seats.rules ${D}${sysconfdir}/udev/rules.d/weston-seats.rules
+}
+
+do_install_append_r8a77965() {
+    # DomU based product doesn't need transform
+    if echo "${XT_GUESTS_INSTALL}" | grep -qi "domu";then
+        sed -e '$a\\' \
+            -e '$a\[output]' \
+            -e '$a\name=VGA-1' \
+            -i ${D}/${sysconfdir}/xdg/weston/weston.ini
+    else
+        sed -e '$a\\' \
+            -e '$a\[output]' \
+            -e '$a\name=VGA-1' \
+            -e '$a\transform=${TRANSFORM}' \
+            -i ${D}/${sysconfdir}/xdg/weston/weston.ini
+    fi
+}
