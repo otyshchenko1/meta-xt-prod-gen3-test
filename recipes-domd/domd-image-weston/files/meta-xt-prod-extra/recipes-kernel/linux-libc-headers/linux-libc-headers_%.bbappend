@@ -1,5 +1,5 @@
 RENESAS_BSP_URL = "git://github.com/xen-troops/linux.git"
 
 BRANCH = "perf_opt"
-SRCREV = "5c39f22dca28305bc4691313294b606ccb1da10d"
+SRCREV = "f1b45efba788f46fcd361429162031d44488a9ee"
 LINUX_VERSION = "4.14.35"
