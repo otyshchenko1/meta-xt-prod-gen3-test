@@ -37,8 +37,9 @@ file xt-build-server.cfg:
 
 cp xt-build-server.cfg xt-gen3-test.cfg
 
-3. Edit it to fit your environment: the variables we need to change
-are under [path] section. Please set:
+3. Edit it to fit your environment.
+
+Please, change the variables under [path] section:
  - workspace_base_dir: change it to point to the place where the build will happen
  - workspace_storage_base_dir: change it to where downloads and other files will be put
 
@@ -47,25 +48,16 @@ For example,
 workspace_base_dir = /home/workspace_base
 workspace_storage_base_dir = /home/workspace_storage_base
 
-4. Run the build script for current stable release:
+The XT_RCAR_EVAPROPRIETARY_DIR variable under [local_conf] section depends on whether prebuilt EVA proprietary packages are going to be used.
 
-python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product gen3-test --with-local-conf --config xt-gen3-test.cfg
+If you are going to use prebuilt EVA proprietary packages, please change XT_RCAR_EVAPROPRIETARY_DIR variable
+to point to the place where EVA proprietary packages will be copied in step #4.
 
-Hereafter the supported MACHINE_NAMEs are:
-- salvator-x-h3  (Salvator-X board with H3 ES2.0 SoC installed)
-- salvator-x-h3-4x2g (Salvator-X board with H3 ES3.0 SoC installed)
-- salvator-x-m3  (Salvator-X board with M3 SoC installed)
-- salvator-xs-h3  (Salvator-XS board with H3 ES2.0 SoC installed)
-- salvator-xs-h3-2x2g (Salvator-XS board with H3 ES3.0 SoC installed)
-- salvator-xs-h3-4x2g (Salvator-XS board with H3 ES3.0 SoC installed)
-- salvator-xs-m3n (Salvator-XS board with M3N SoC installed)
-- h3ulcb (H3ULCB board with H3 ES2.0 SoC installed)
-- m3ulcb (M3ULCB board with M3 SoC installed)
+If you are going to build Graphics DDK from sources (without prebuilt EVA proprietary packages), please remove that variable.
+In that case step #4 can be omitted.
 
-5. After that you will have all the build environment setup at workspace_base_dir
-directory.
-
-6. Download and copy EVA proprietary packages to your local filesystem at some directory:
+4. Download and copy EVA proprietary packages to your local filesystem at the directory pointed by XT_RCAR_EVAPROPRIETARY_DIR variable
+(only if prebuilt EVA proprietary packages are used):
 
 For example,
 
@@ -90,24 +82,26 @@ For example (M3ULCB case),
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domd.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domd.tar.gz
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domu.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domu.tar.gz
 
-7. Edit local.conf:
+5. Run the build script:
 
-workspace_base/build/conf/local.conf
+python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product PRODUCT_NAME --with-local-conf --config xt-gen3-test.cfg --with-do-build
 
-and append the following:
+Where the PRODUCT_NAME depends on whether prebuilt EVA proprietary packages are used or not:
+- gen3-test (to use prebuilt EVA proprietary packages)
+- gen3-test-src (to build Graphics DDK from sources)
 
-XT_GUESTS_INSTALL = "domu"
-XT_GUESTS_BUILD = "domu"
-XT_RCAR_EVAPROPRIETARY_DIR = "/path/to/eva/archives"
+Hereafter the supported MACHINE_NAMEs are:
+- salvator-x-h3  (Salvator-X board with H3 ES2.0 SoC installed)
+- salvator-x-h3-4x2g (Salvator-X board with H3 ES3.0 SoC installed)
+- salvator-x-m3  (Salvator-X board with M3 SoC installed)
+- salvator-xs-h3  (Salvator-XS board with H3 ES2.0 SoC installed)
+- salvator-xs-h3-2x2g (Salvator-XS board with H3 ES3.0 SoC installed)
+- salvator-xs-h3-4x2g (Salvator-XS board with H3 ES3.0 SoC installed)
+- salvator-xs-m3n (Salvator-XS board with M3N SoC installed)
+- h3ulcb (H3ULCB board with H3 ES2.0 SoC installed)
+- m3ulcb (M3ULCB board with M3 SoC installed)
 
-with the correct path to the archives set.
-
-8. Now, to build the images you can run the same command as in 4) but with
-additional argument --continue-build:
-
-python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product gen3-test --with-local-conf --config xt-gen3-test.cfg --continue-build
-
-9. You are done. The artifacts of the build are located at workspace_base directory:
+6. You are done. The artifacts of the build are located at workspace_base directory:
 workspace_base
 ├── build
 │   ├── conf
@@ -230,7 +224,7 @@ workspace_base/build/tmp/log/domd-image-weston/cooker/MACHINE-NAME-xt
 - DomU:
 workspace_base/build/tmp/log/domu-image-weston/cooker/MACHINE-NAME-xt
 
-10. If one wants to build any domain's images by hand, at the time of development
+7. If one wants to build any domain images manually, at the time of development
 for instance, it is possible by going into desired directory and using poky to build:
 
 - For building Domain-0:
