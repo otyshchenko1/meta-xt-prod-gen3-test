@@ -18,6 +18,7 @@ SRC_URI_append_rcar = " \
     file://0002-Revert-clk-renesas-r8a7796-Remove-clock-that-supplie.patch \
     file://0003-Revert-clk-renesas-r8a7795-Remove-clock-that-supplie.patch \
     file://0004-Revert-clk-renesas-r8a7796-Remove-clock-that-supplie.patch \
+    file://xen-chosen.dtsi;subdir=git/arch/${ARCH}/boot/dts/renesas \
 "
 
 DEPLOYDIR="${XT_DIR_ABS_SHARED_BOOT_DOMD}"
