@@ -1,15 +1,13 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 ################################################################################
+# Following inc file defines XEN version for the product and its SRC_URI
+################################################################################
+require xen-version.inc
+
+################################################################################
 # Renesas R-Car
 ################################################################################
-
-XEN_REL_rcar = "4.10"
-PV = "${XEN_REL}.0+git${SRCPV}"
-SRCREV = "9146e74008e959a0a4dd625e52eb97a8ec2824b3"
-
-SRC_URI_rcar = "git://github.com/xen-troops/xen.git;protocol=https;branch=perf_opt"
-
 # N.B. as Xen doesn't support partial .cfg as kernel does
 # we need to patch it to select disable IPMMU PGT sharing for
 # H3 v2.0 and M3 machines
