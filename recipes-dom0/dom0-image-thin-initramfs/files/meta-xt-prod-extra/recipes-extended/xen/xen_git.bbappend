@@ -1,14 +1,14 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 ################################################################################
+# Following inc file defines XEN version for the product and its SRC_URI
+################################################################################
+require xen-version.inc
+
+################################################################################
 # We only need Xen tools, so we can start domains
 ################################################################################
-XEN_REL = "4.10"
-PV = "${XEN_REL}.0+git${SRCPV}"
-SRCREV = "9146e74008e959a0a4dd625e52eb97a8ec2824b3"
-
-SRC_URI = " \
-    git://github.com/xen-troops/xen.git;protocol=https;branch=perf_opt \
+SRC_URI_append = " \
     file://0001-libxl-Add-DTB-compatible-list-to-config-file.patch \
     file://0002-libxl-Add-DTB-passthrough-nodes-list.patch \
 "
