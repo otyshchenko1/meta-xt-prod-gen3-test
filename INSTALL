@@ -1,6 +1,12 @@
 Prerequisites:
 ==============
-1. Python Git: sudo apt-get install python-git
+1. Install tools: apt-get install gawk wget diffstat texinfo chrpath socat libsdl1.2-dev \
+                    python-crypto repo checkpolicy python-git \
+                    python-ctypeslib bzr pigz m4 lftp openjdk-8-jdk git-core \
+                    gnupg flex bison gperf build-essential zip curl zlib1g-dev \
+                    gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev \
+                    x11proto-core-dev libx11-dev lib32z-dev ccache libgl1-mesa-dev \
+                    libxml2-utils xsltproc unzip -y
 2. Google repo: https://source.android.com/source/downloading
 3. Checked with Python v 2.7.12, but other should also work
 
@@ -19,10 +25,8 @@ It also contains different para-virtualized (PV) backends running inside it in o
 3. Machine dependent simple guest domain named "DomU". It has different PV frontends running and
 doesn't have any HW assigned except GPU. The latter is shared between "DomD" and "DomU" in current setup.
 
-It worth to mention that IPMMU for GPU is enabled in case of H3 ES3.0 only. For other supported SoCs the PVRKM
+It is worth to mention that IPMMU for GPU is enabled in case of H3 ES3.0 and M3N only. For other supported SoCs the PVRKM
 performs IPA to PA translations using a hypercall to hypervisor.
-
-The ARM TF was patched to bring up all available CPU cores.
 
 Build:
 ======
