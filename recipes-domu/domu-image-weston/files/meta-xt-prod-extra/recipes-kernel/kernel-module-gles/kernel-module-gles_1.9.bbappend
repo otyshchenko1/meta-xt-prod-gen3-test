@@ -3,21 +3,3 @@ require inc/xt_shared_env.inc
 PVRKM_URL = "git://git@gitpct.epam.com/epmd-aepr/pvr_km_vgpu_img.git"
 BRANCH = "perf_opt"
 SRCREV = "b93358a14e996d8fe9774ed8bd9171fe4e61c802"
-
-EXTRA_OEMAKE += "PVRSRV_VZ_NUM_OSID=${XT_PVR_NUM_OSID}"
-
-# Auto load pvrsrvkm
-KERNEL_MODULE_AUTOLOAD_append = " pvrsrvkm"
-
-# Build GFX kernel module without suffix
-KERNEL_MODULE_PACKAGE_SUFFIX = ""
-
-FILES_${PN} = " \
-    /lib/modules/${KERNEL_VERSION}/extra/pvrsrvkm.ko \
-    ${sysconfdir}/modules-load.d \
-"
-
-do_install_append() {
-    install -d ${DEPLOY_DIR_IMAGE}/xt-rcar
-    cp -rf ${D}/* ${DEPLOY_DIR_IMAGE}/xt-rcar
-}
