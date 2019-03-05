@@ -4,9 +4,9 @@ require inc/xt_shared_env.inc
 
 RENESAS_BSP_URL = "git://github.com/xen-troops/linux.git"
 
-BRANCH = "perf_opt"
-SRCREV = "f1b45efba788f46fcd361429162031d44488a9ee"
-LINUX_VERSION = "4.14.35"
+BRANCH = "v4.14.75-ltsi/rcar-3.9.2"
+SRCREV = "${AUTOREV}"
+LINUX_VERSION = "4.14.75"
 SRC_URI_append = " \
     file://defconfig \
 "
