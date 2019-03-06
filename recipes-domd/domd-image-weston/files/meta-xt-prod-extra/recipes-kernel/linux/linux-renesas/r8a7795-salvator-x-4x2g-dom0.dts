@@ -53,11 +53,9 @@
 	 * CPU nodes to be present get broken. This is why we have to explicitly
 	 * remove the following.
 	 */
-	soc {
-		/delete-node/thermal-zones;
-		/delete-node/pmu_a57;
-		/delete-node/pmu_a53;
-	};
+	/delete-node/thermal-zones;
+	/delete-node/pmu_a57;
+	/delete-node/pmu_a53;
 };
 
 /delete-node/&adsp;
@@ -243,14 +241,6 @@
 	iommus = <&ipmmu_hc 6>;
 };
 
-&ehci3 {
-	iommus = <&ipmmu_hc 7>;
-};
-
-&ohci3 {
-	iommus = <&ipmmu_hc 7>;
-};
-
 &usb_dmac0 {
 	iommus = <&ipmmu_hc 9>;
 };
@@ -390,9 +380,7 @@
 &ssi8			{ xen,passthrough; };
 &ssi9			{ xen,passthrough; };
 &usb2_phy0		{ xen,passthrough; };
-&usb2_phy3		{ xen,passthrough; };
 &hsusb			{ xen,passthrough; };
-&hsusb3			{ xen,passthrough; };
 &xhci0			{ xen,passthrough; };
 &usb3_peri0		{ xen,passthrough; };
 &ohci0			{ xen,passthrough; };
@@ -401,8 +389,6 @@
 &ehci1			{ xen,passthrough; };
 &ohci2			{ xen,passthrough; };
 &ehci2			{ xen,passthrough; };
-&ohci3			{ xen,passthrough; };
-&ehci3			{ xen,passthrough; };
 &ivdp1c			{ xen,passthrough; };
 &vdpb			{ xen,passthrough; };
 &vcplf			{ xen,passthrough; };
@@ -428,4 +414,5 @@
 &fcpcs			{ xen,passthrough; };
 &tsc			{ xen,passthrough; };
 &i2c_dvfs		{ xen,passthrough; };
+&pmic			{ xen,passthrough; };
 
