@@ -53,9 +53,21 @@
 
 	/delete-node/mmngr;
 	/delete-node/mmngrbuf;
+
+	aliases {
+		/delete-property/i2c7;
+	};
 };
 
 /delete-node/&adsp;
+
+&a57_0 {
+	/delete-property/cpu-supply;
+};
+
+/delete-node/&avs;
+
+/delete-node/&i2c_dvfs;
 
 &dmac0 {
 	/delete-property/iommus;

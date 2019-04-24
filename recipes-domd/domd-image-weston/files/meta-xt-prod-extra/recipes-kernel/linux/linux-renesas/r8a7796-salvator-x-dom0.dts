@@ -51,12 +51,17 @@
 	/delete-node/thermal-zones;
 	/delete-node/pmu_a57;
 	/delete-node/pmu_a53;
+
+	aliases {
+		/delete-property/i2c7;
+	};
 };
 
 /delete-node/&adsp;
 
 &a57_0 {
 	clocks = <&scpi_dvfs 0>;
+	/delete-property/cpu-supply;
 };
 
 &a57_1 {
@@ -78,6 +83,10 @@
 &a53_3 {
 	/delete-property/clocks;
 };
+
+/delete-node/&avs;
+
+/delete-node/&i2c_dvfs;
 
 /* ============================ Enabled IPMMUs ===============================*/
 &ipmmu_mm {
@@ -299,6 +308,4 @@
 &fcpvd2			{ xen,passthrough; };
 &fcpcs			{ xen,passthrough; };
 &tsc			{ xen,passthrough; };
-&i2c_dvfs		{ xen,passthrough; };
-&pmic			{ xen,passthrough; };
 
