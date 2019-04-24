@@ -307,5 +307,4 @@
 &fcpvd1			{ xen,passthrough; };
 &fcpvd2			{ xen,passthrough; };
 &fcpcs			{ xen,passthrough; };
-&tsc			{ xen,passthrough; };
 
