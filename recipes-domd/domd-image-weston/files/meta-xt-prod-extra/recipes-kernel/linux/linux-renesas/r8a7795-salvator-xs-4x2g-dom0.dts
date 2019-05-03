@@ -83,19 +83,19 @@
 };
 
 &a53_0 {
-	/delete-property/clocks;
+	clocks = <&scpi_dvfs 1>;
 };
 
 &a53_1 {
-	/delete-property/clocks;
+	clocks = <&scpi_dvfs 1>;
 };
 
 &a53_2 {
-	/delete-property/clocks;
+	clocks = <&scpi_dvfs 1>;
 };
 
 &a53_3 {
-	/delete-property/clocks;
+	clocks = <&scpi_dvfs 1>;
 };
 
 /delete-node/&avs;
