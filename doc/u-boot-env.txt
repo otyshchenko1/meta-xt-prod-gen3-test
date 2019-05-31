@@ -74,6 +74,11 @@ we have an ability to flash bootloader image(s) right here in U-Boot (images mus
 Partitions and offsets the images need to be flashed to were retrieved here:
 https://github.com/renesas-rcar/flash_writer/blob/rcar_gen3/docs/application-note.md#348-write-to-the-s-record-format-images-to-the-emmc
 
+Pay attention that tee.bin from daily build contains binary header that need to be removed before flashing.
+Header can be recognized by presence of 'OPTE' in first four chars of file.
+In order to remove header (replace tee_with_header.bin by proper name):
+dd bs=28 skip=1 if=tee_with_header.bin of=tee.bin
+
 setenv flash_bootparam_sa0 'tftp 0x48000000 bootparam_sa0.bin; mmc dev 1 1; mmc write 0x48000000 0x0 0x1E;'
 setenv flash_bl2 'tftp 0x48000000 bl2.bin; mmc dev 1 1; mmc write 0x48000000 0x1E 0x162;'
 setenv flash_cert_header_sa6 'tftp 0x48000000 cert_header_sa6_emmc.bin; mmc dev 1 1; mmc write 0x48000000 0x180 0x80;'
