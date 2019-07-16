@@ -45,7 +45,6 @@ python do_domd_install_machine_overrides() {
 
 XT_QUIRK_PATCH_SRC_URI_rcar = "\
     file://${S}/meta-renesas/meta-rcar-gen3/docs/sample/patch/patch-for-linaro-gcc/0001-rcar-gen3-add-readme-for-building-with-Linaro-Gcc.patch;patchdir=meta-renesas \
-    file://0001-hack-Remove-dependency-to-multi-user.target-from-wes.patch;patchdir=meta-renesas \
     file://0001-rcar-gen3-arm-trusted-firmware-Allow-to-add-more-bui.patch;patchdir=meta-renesas \
     file://0001-copyscript-Set-GFX-Library-List-to-empty-string.patch;patchdir=meta-renesas \
     file://0001-Add-vspfilter-config-for-salvator-x-4x2g-machine.patch;patchdir=meta-renesas \
