@@ -6,4 +6,3 @@
 require ../meta-xt-images-domx/recipes-extended/xen/xen-4.12-rocko.inc
 
 SRC_URI = "git://github.com/xen-troops/xen.git;protocol=https;branch=master"
-SRCREV = "da68ad1694c777de4f2d0caa748e9ed1fc22cbaa"
