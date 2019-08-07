@@ -28,6 +28,17 @@ FILES_${PN}-flask = " \
     /boot/${FLASK_POLICY_FILE} \
 "
 
+FILES_${PN}-libxentoolcore = "${libdir}/libxentoolcore.so.*"
+FILES_${PN}-libxentoolcore-dev = " \
+    ${libdir}/libxentoolcore.so \
+    ${datadir}/pkgconfig/xentoolcore.pc \
+    "
+
+PACKAGES_append = "\
+    ${PN}-libxentoolcore \
+    ${PN}-libxentoolcore-dev \
+    "
+
 do_configure_append() {
     oe_runmake xt_defconfig
 }

@@ -31,4 +31,13 @@ do_install_append() {
 FILES_${PN}-xencommons += " \
     ${localstatedir}/lib/xen \
 "
+FILES_${PN}-libxentoolcore = "${libdir}/libxentoolcore.so.*"
+FILES_${PN}-libxentoolcore-dev = " \
+    ${libdir}/libxentoolcore.so \
+    ${datadir}/pkgconfig/xentoolcore.pc \
+    "
 
+PACKAGES_append = "\
+    ${PN}-libxentoolcore \
+    ${PN}-libxentoolcore-dev \
+    "
