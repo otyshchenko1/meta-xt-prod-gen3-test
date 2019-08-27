@@ -53,13 +53,20 @@ For example,
 workspace_base_dir = /home/workspace_base
 workspace_storage_base_dir = /home/workspace_storage_base
 
-The XT_RCAR_EVAPROPRIETARY_DIR variable under [local_conf] section depends on whether prebuilt EVA proprietary "graphics" packages are going to be used.
+3.1 The XT_RCAR_EVAPROPRIETARY_DIR variable under [local_conf] section depends on whether prebuilt EVA proprietary "graphics" packages are going to be used.
 
 If you are going to use prebuilt EVA proprietary "graphics" packages, please change XT_RCAR_EVAPROPRIETARY_DIR variable
 to point to the place where the prebuilt packages will be copied in step #4.
 
 If you are going to build Graphics DDK from sources (without prebuilt EVA proprietary "graphics" packages), please remove that variable.
 In that case step #4 can be omitted.
+
+3.2 The XT_RCAR_PROPRIETARY_MULTIMEDIA_DIR variable under [local_conf] section depends on whether the multimedia is going to be used (in DomD).
+
+If you are going to use multimedia you will need the proprietary "multimedia" packages in the first place,
+please change XT_RCAR_PROPRIETARY_MULTIMEDIA_DIR variable to point to the place where the corresponding packages will be copied in step #5.
+
+If you are not going to use multimedia, please remove that variable. In that case step #5 can be omitted.
 
 4. Download and copy EVA proprietary "graphics" packages to your local filesystem at the directory pointed by XT_RCAR_EVAPROPRIETARY_DIR variable
 (only if prebuilt packages are used):
@@ -87,7 +94,16 @@ For example (M3ULCB case),
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domd.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domd.tar.gz
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domu.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domu.tar.gz
 
-5. Run the build script:
+5. Only for the multimedia usage.
+Follow the procedure described in "Preliminary steps #1" from https://elinux.org/R-Car/Boards/Yocto-Gen3
+to download Multimedia and Graphics library and related Linux drivers. These software packages
+should be stored at the directory pointed by XT_RCAR_PROPRIETARY_MULTIMEDIA_DIR variable.
+
+Please note, although only "multimedia" packages will be used here, there is no need
+to re-pack package archives in order to remove "graphics" packages, unneeded packages
+will be just skipped.
+
+6. Run the build script:
 
 python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product PRODUCT_NAME --branch RELEASE_NAME --with-local-conf --config xt-gen3-test.cfg --with-do-build
 
@@ -110,7 +126,7 @@ Hereafter the supported MACHINE_NAMEs are:
 - h3ulcb (H3ULCB board with H3 ES2.0 SoC installed)
 - m3ulcb (M3ULCB board with M3 SoC installed)
 
-6. You are done. The artifacts of the build are located at workspace_base directory:
+7. You are done. The artifacts of the build are located at workspace_base directory:
 workspace_base
 ├── build
 │   ├── conf
@@ -233,7 +249,7 @@ workspace_base/build/tmp/log/domd-image-weston/cooker/MACHINE-NAME-xt
 - DomU:
 workspace_base/build/tmp/log/domu-image-weston/cooker/MACHINE-NAME-xt
 
-7. If one wants to build any domain images manually, at the time of development
+8. If one wants to build any domain images manually, at the time of development
 for instance, it is possible by going into desired directory and using poky to build:
 
 - For building Domain-0:
