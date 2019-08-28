@@ -53,16 +53,16 @@ For example,
 workspace_base_dir = /home/workspace_base
 workspace_storage_base_dir = /home/workspace_storage_base
 
-The XT_RCAR_EVAPROPRIETARY_DIR variable under [local_conf] section depends on whether prebuilt EVA proprietary packages are going to be used.
+The XT_RCAR_EVAPROPRIETARY_DIR variable under [local_conf] section depends on whether prebuilt EVA proprietary "graphics" packages are going to be used.
 
-If you are going to use prebuilt EVA proprietary packages, please change XT_RCAR_EVAPROPRIETARY_DIR variable
-to point to the place where EVA proprietary packages will be copied in step #4.
+If you are going to use prebuilt EVA proprietary "graphics" packages, please change XT_RCAR_EVAPROPRIETARY_DIR variable
+to point to the place where the prebuilt packages will be copied in step #4.
 
-If you are going to build Graphics DDK from sources (without prebuilt EVA proprietary packages), please remove that variable.
+If you are going to build Graphics DDK from sources (without prebuilt EVA proprietary "graphics" packages), please remove that variable.
 In that case step #4 can be omitted.
 
-4. Download and copy EVA proprietary packages to your local filesystem at the directory pointed by XT_RCAR_EVAPROPRIETARY_DIR variable
-(only if prebuilt EVA proprietary packages are used):
+4. Download and copy EVA proprietary "graphics" packages to your local filesystem at the directory pointed by XT_RCAR_EVAPROPRIETARY_DIR variable
+(only if prebuilt packages are used):
 
 For example,
 
@@ -91,8 +91,8 @@ ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domu.tar.gz rcar-proprietary-gra
 
 python ./build_prod.py --build-type dailybuild --machine MACHINE_NAME --product PRODUCT_NAME --branch RELEASE_NAME --with-local-conf --config xt-gen3-test.cfg --with-do-build
 
-Where the PRODUCT_NAME depends on whether prebuilt EVA proprietary packages are used or not:
-- gen3-test (to use prebuilt EVA proprietary packages)
+Where the PRODUCT_NAME depends on whether prebuilt EVA proprietary "graphics" packages are used or not:
+- gen3-test (to use prebuilt EVA proprietary "graphics" packages)
 - gen3-test-src (to build Graphics DDK from sources)
 
 Where the RELEASE_NAME name is the name of the release to be built.
