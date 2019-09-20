@@ -33,6 +33,7 @@ inherit systemd
 PACKAGES += " \
     ${PN}-bridge-config \
     ${PN}-displbe-service \
+    ${PN}-sndbe-service \
     ${PN}-bridge-up-notification-service \
 "
 
@@ -46,16 +47,23 @@ FILES_${PN}-bridge-config = " \
 
 SYSTEMD_PACKAGES = " \
     ${PN}-displbe-service \
+    ${PN}-sndbe-service \
     ${PN}-bridge-up-notification-service \
 "
 
 SYSTEMD_SERVICE_${PN}-displbe-service = " displbe.service"
+
+SYSTEMD_SERVICE_${PN}-sndbe-service = " sndbe.service"
 
 SYSTEMD_SERVICE_${PN}-bridge-up-notification-service = " bridge-up-notification.service"
 
 FILES_${PN}-displbe-service = " \
     ${systemd_system_unitdir}/displbe.service \
     ${base_prefix}${sysconfdir}/systemd/system/displbe \
+"
+
+FILES_${PN}-sndlbe-service = " \
+    ${systemd_system_unitdir}/sndbe.service \
 "
 
 FILES_${PN}-bridge-up-notification-service = " \
@@ -80,6 +88,7 @@ do_install() {
 
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/displbe.service ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/sndbe.service ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/bridge-up-notification.service ${D}${systemd_system_unitdir}
 
     install -d ${D}${sysconfdir}/systemd/network/
@@ -90,19 +99,10 @@ do_install() {
     install -m 0644 ${WORKDIR}/xenbr0-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
     install -m 0644 ${WORKDIR}/port-forward-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
 
-    install -d ${D}${systemd_user_unitdir}
-    install -m 0644 ${WORKDIR}/sndbe.service ${D}${systemd_user_unitdir}
-    rm -f ${D}${systemd_system_unitdir}/sndbe.service
-
-    install -d ${D}${sysconfdir}/systemd/user/default.target.wants
-    ln -sf ${systemd_user_unitdir}/sndbe.service ${D}${sysconfdir}/systemd/user/default.target.wants
-
     ln -sf ${systemd_system_unitdir}/displbe.service ${D}${sysconfdir}/systemd/system/displbe
 }
 
 FILES_${PN} = " \
     ${base_prefix}${XT_DIR_ABS_ROOTFS_SCRIPTS}/*.sh \
-    ${systemd_user_unitdir}/sndbe.service \
-    ${base_prefix}${sysconfdir}/systemd/user/default.target.wants \
 "
 
