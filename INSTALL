@@ -125,6 +125,7 @@ Hereafter the supported MACHINE_NAMEs are:
 - salvator-xs-m3n (Salvator-XS board with M3N SoC installed)
 - h3ulcb (H3ULCB board with H3 ES2.0 SoC installed)
 - m3ulcb (M3ULCB board with M3 SoC installed)
+- h3ulcb-4x2g (H3ULCB board with H3 ES3.0 SoC installed, 8GB RAM)
 
 7. You are done. The artifacts of the build are located at workspace_base directory:
 workspace_base
