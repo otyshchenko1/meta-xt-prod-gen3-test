@@ -15,8 +15,7 @@ SRC_URI = " \
     file://display-manager.service \
     file://dm-salvator-x-m3.cfg \
     file://dm-salvator-x-h3.cfg \
-    file://dm-m3ulcb.cfg \
-    file://dm-h3ulcb.cfg \
+    file://dm-ulcb.cfg \
     file://dm-salvator-xs-m3n.cfg \
     file://eth0.network \
     file://xenbr0.netdev \
@@ -72,8 +71,7 @@ DM_CONFIG_salvator-xs-h3-xt = "dm-salvator-x-h3.cfg"
 DM_CONFIG_salvator-xs-h3-4x2g-xt = "dm-salvator-x-h3.cfg"
 DM_CONFIG_salvator-xs-h3-2x2g-xt = "dm-salvator-x-h3.cfg"
 DM_CONFIG_salvator-x-h3-4x2g-xt = "dm-salvator-x-h3.cfg"
-DM_CONFIG_m3ulcb-xt = "dm-m3ulcb.cfg"
-DM_CONFIG_h3ulcb-xt = "dm-h3ulcb.cfg"
+DM_CONFIG_ulcb = "dm-ulcb.cfg"
 DM_CONFIG_salvator-xs-m3n-xt = "dm-salvator-xs-m3n.cfg"
 
 do_install() {
@@ -81,16 +79,8 @@ do_install() {
     install -m 0744 ${WORKDIR}/*.sh ${D}${base_prefix}${XT_DIR_ABS_ROOTFS_SCRIPTS}
 
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${WORKDIR}/*.service ${D}${systemd_system_unitdir}
-
-    # N.B. display-manager must be installed as a user service which
-    # is not supported by systemd.bbclass at the moment, so
-    # do all dirty work by hands
-    rm ${D}${systemd_system_unitdir}/display-manager.service
-    install -d ${D}${systemd_user_unitdir}
-    install -m 0644 ${WORKDIR}/display-manager.service ${D}${systemd_user_unitdir}
-    install -d ${D}${sysconfdir}/systemd/user/default.target.wants
-    ln -sf ${systemd_user_unitdir}/display-manager.service ${D}${sysconfdir}/systemd/user/default.target.wants
+    install -m 0644 ${WORKDIR}/displbe.service ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/bridge-up-notification.service ${D}${systemd_system_unitdir}
 
     install -d ${D}${sysconfdir}/systemd/network/
     install -m 0644 ${WORKDIR}/*.network ${D}${sysconfdir}/systemd/network
@@ -99,9 +89,6 @@ do_install() {
     install -d ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
     install -m 0644 ${WORKDIR}/xenbr0-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
     install -m 0644 ${WORKDIR}/port-forward-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
-
-    install -d ${D}${base_prefix}${XT_DIR_ABS_ROOTFS_CFG}
-    install -m 0744 ${WORKDIR}/${DM_CONFIG} ${D}${base_prefix}${XT_DIR_ABS_ROOTFS_CFG}/dm.cfg
 
     install -d ${D}${systemd_user_unitdir}
     install -m 0644 ${WORKDIR}/sndbe.service ${D}${systemd_user_unitdir}
@@ -115,8 +102,6 @@ do_install() {
 
 FILES_${PN} = " \
     ${base_prefix}${XT_DIR_ABS_ROOTFS_SCRIPTS}/*.sh \
-    ${base_prefix}${XT_DIR_ABS_ROOTFS_CFG}/*.cfg \
-    ${systemd_user_unitdir}/display-manager.service \
     ${systemd_user_unitdir}/sndbe.service \
     ${base_prefix}${sysconfdir}/systemd/user/default.target.wants \
 "
