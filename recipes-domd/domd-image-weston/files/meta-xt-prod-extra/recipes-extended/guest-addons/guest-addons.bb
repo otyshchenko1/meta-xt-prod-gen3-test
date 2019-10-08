@@ -59,7 +59,6 @@ SYSTEMD_SERVICE_${PN}-bridge-up-notification-service = " bridge-up-notification.
 
 FILES_${PN}-displbe-service = " \
     ${systemd_system_unitdir}/displbe.service \
-    ${base_prefix}${sysconfdir}/systemd/system/displbe \
 "
 
 FILES_${PN}-sndlbe-service = " \
@@ -98,8 +97,6 @@ do_install() {
     install -d ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
     install -m 0644 ${WORKDIR}/xenbr0-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
     install -m 0644 ${WORKDIR}/port-forward-systemd-networkd.conf ${D}${sysconfdir}/systemd/system/systemd-networkd.service.d
-
-    ln -sf ${systemd_system_unitdir}/displbe.service ${D}${sysconfdir}/systemd/system/displbe
 }
 
 FILES_${PN} = " \
