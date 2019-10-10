@@ -139,7 +139,7 @@
 			 <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
 };
 
-audma0 {
+&audma0 {
 	iommus = <&ipmmu_mp 0>, <&ipmmu_mp 1>,
 			 <&ipmmu_mp 2>, <&ipmmu_mp 3>,
 			 <&ipmmu_mp 4>, <&ipmmu_mp 5>,
@@ -150,7 +150,7 @@ audma0 {
 			 <&ipmmu_mp 14>, <&ipmmu_mp 15>;
 };
 
-audma1 {
+&audma1 {
 	iommus = <&ipmmu_mp 16>, <&ipmmu_mp 17>,
 			 <&ipmmu_mp 18>, <&ipmmu_mp 19>,
 			 <&ipmmu_mp 20>, <&ipmmu_mp 21>,
