@@ -121,6 +121,8 @@ configure_versions_rcar() {
     if echo "${XT_GUESTS_INSTALL}" | grep -qi "domu";then
         base_set_conf_value ${local_conf} DISTRO_FEATURES_remove "ivi-shell"
     fi
+
+    base_update_conf_value ${local_conf} XT_RCAR_PROPRIETARY_MULTIMEDIA_DIR "${XT_RCAR_PROPRIETARY_MULTIMEDIA_DIR}"
 }
 
 # In order to copy proprietary "multimedia" packages,
