@@ -7,7 +7,7 @@ Prerequisites:
                     gnupg flex bison gperf build-essential zip curl zlib1g-dev \
                     gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev \
                     x11proto-core-dev libx11-dev lib32z-dev ccache libgl1-mesa-dev \
-                    libxml2-utils xsltproc unzip python-clang-5.0 -y
+                    libxml2-utils xsltproc unzip python-clang-5.0 gcc-5 g++-5 -y
 2. Download and install Google repo: https://source.android.com/setup/build/downloading#installing-repo
 3. Checked with Python v 2.7.12, but other should also work
 
@@ -93,6 +93,11 @@ For example (M3ULCB case),
 
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domd.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domd.tar.gz
 ln -s rcar-proprietary-graphic-salvator-x-m3-xt-domu.tar.gz rcar-proprietary-graphic-m3ulcb-xt-domu.tar.gz
+
+For example (h3ulcb-4x2g case),
+
+ln -s rcar-proprietary-graphic-salvator-x-h3-4x2g-xt-domd.tar.gz rcar-proprietary-graphic-h3ulcb-4x2g-xt-domd.tar.gz
+ln -s rcar-proprietary-graphic-salvator-x-h3-4x2g-xt-domu.tar.gz rcar-proprietary-graphic-h3ulcb-4x2g-xt-domu.tar.gz
 
 5. Only for the multimedia usage.
 Follow the procedure described in "Preliminary steps #1" from https://elinux.org/R-Car/Boards/Yocto-Gen3
