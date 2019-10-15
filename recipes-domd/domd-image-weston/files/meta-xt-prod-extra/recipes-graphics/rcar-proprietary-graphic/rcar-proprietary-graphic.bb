@@ -15,7 +15,7 @@ SRC_URI = "file://rcar-proprietary-graphic-${MACHINE}-domd.tar.gz"
 
 inherit update-rc.d systemd
 
-INITSCRIPT_NAME = "pvrinit"
+INITSCRIPT_NAME = "rc.pvr"
 INITSCRIPT_PARAMS = "start 7 5 2 . stop 62 0 1 6 ."
 SYSTEMD_SERVICE_${PN} = "rc.pvr.service"
 KERNEL_VERSION = "${@oe.utils.read_file('${STAGING_KERNEL_BUILDDIR}/kernel-abiversion')}"
