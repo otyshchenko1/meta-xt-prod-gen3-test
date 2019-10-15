@@ -6,4 +6,4 @@
 require ../meta-xt-images-domx/recipes-extended/xen/xen-4.13-thud.inc
 
 SRC_URI = "git://github.com/xen-troops/xen.git;protocol=https;branch=xen-4.13rc-migration"
-SRCREV = "794cf8d2a11920d66af5c104bc8b0f49dd987c59"
+SRCREV = "d5c4a329eb1f0225e046695b8c247517bbbd41b4"
